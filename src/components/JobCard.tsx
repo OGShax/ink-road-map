@@ -1,7 +1,17 @@
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, MapPin, DollarSign, Clock } from "lucide-react";
+import { Calendar, MapPin, DollarSign, Clock, CheckCircle, User } from "lucide-react";
+import { VerifiedBadge } from "./VerifiedBadge";
+
+interface WinnerBid {
+  providerId: string;
+  providerName: string;
+  amount: number;
+  acceptedAt: string;
+  estimatedCompletion?: string;
+  completedAt?: string;
+}
 
 interface JobCardProps {
   id: string;
@@ -14,6 +24,7 @@ interface JobCardProps {
   postedAt: string;
   status: string;
   bidCount: number;
+  winnerBid?: WinnerBid;
   onViewJob: (id: string) => void;
   onBid: (id: string) => void;
 }
@@ -29,6 +40,7 @@ export const JobCard = ({
   postedAt,
   status,
   bidCount,
+  winnerBid,
   onViewJob,
   onBid,
 }: JobCardProps) => {
@@ -85,9 +97,43 @@ export const JobCard = ({
           </div>
         </div>
         
-        <div className="text-sm text-muted-foreground">
-          <span className="text-primary font-semibold">{bidCount}</span> bids received
-        </div>
+        {status === 'open' && (
+          <div className="text-sm text-muted-foreground">
+            <span className="text-primary font-semibold">{bidCount}</span> bids received
+          </div>
+        )}
+
+        {(status === 'in_progress' || status === 'completed') && winnerBid && (
+          <div className="space-y-2 p-3 bg-muted/50 rounded-lg border">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-4 h-4 text-green-500" />
+                <span className="text-sm font-medium">Awarded to</span>
+              </div>
+              <VerifiedBadge size="sm" showText={false} variant="minimal" />
+            </div>
+            <div className="flex items-center gap-2">
+              <User className="w-4 h-4 text-muted-foreground" />
+              <span className="text-sm font-semibold">{winnerBid.providerName}</span>
+            </div>
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">Winning bid:</span>
+              <span className="text-primary font-semibold">${winnerBid.amount.toLocaleString()}</span>
+            </div>
+            {status === 'completed' && winnerBid.completedAt && (
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">Completed:</span>
+                <span className="text-green-600 font-medium">{new Date(winnerBid.completedAt).toLocaleDateString()}</span>
+              </div>
+            )}
+            {status === 'in_progress' && winnerBid.estimatedCompletion && (
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">Est. completion:</span>
+                <span className="text-blue-600 font-medium">{new Date(winnerBid.estimatedCompletion).toLocaleDateString()}</span>
+              </div>
+            )}
+          </div>
+        )}
       </CardContent>
       
       <CardFooter className="flex gap-2">

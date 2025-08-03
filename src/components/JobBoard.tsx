@@ -42,7 +42,14 @@ const mockJobs = [
     deadline: "2024-02-20",
     postedAt: "2024-01-18",
     status: "in_progress",
-    bidCount: 8
+    bidCount: 8,
+    winnerBid: {
+      providerId: "p2",
+      providerName: "Ink & Steel Tattoos",
+      amount: 1100,
+      acceptedAt: "2024-01-20",
+      estimatedCompletion: "2024-02-18"
+    }
   },
   {
     id: "3",
@@ -66,7 +73,14 @@ const mockJobs = [
     deadline: "2024-02-10",
     postedAt: "2024-01-12",
     status: "completed",
-    bidCount: 23
+    bidCount: 23,
+    winnerBid: {
+      providerId: "p4",
+      providerName: "Elite Nail Artistry",
+      amount: 450,
+      acceptedAt: "2024-01-14",
+      completedAt: "2024-02-08"
+    }
   },
   {
     id: "5",
