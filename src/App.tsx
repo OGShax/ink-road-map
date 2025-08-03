@@ -10,6 +10,12 @@ import { StaffProfile } from "./components/StaffProfile";
 import { StudyCenter } from "./components/StudyCenter";
 import { MonetizationDashboard } from "./components/MonetizationDashboard";
 import Support from "./pages/Support";
+import HowItWorks from "./pages/HowItWorks";
+import SafetyGuarantee from "./pages/SafetyGuarantee";
+import ProviderBenefits from "./pages/ProviderBenefits";
+import GetVerified from "./pages/GetVerified";
+import ResourcesTools from "./pages/ResourcesTools";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +34,12 @@ const App = () => (
           <Route path="/pro-subscription" element={<MonetizationDashboard />} />
           <Route path="/become-provider" element={<MonetizationDashboard />} />
           <Route path="/support" element={<Support />} />
+          <Route path="/how-it-works" element={<HowItWorks />} />
+          <Route path="/safety-guarantee" element={<SafetyGuarantee />} />
+          <Route path="/provider-benefits" element={<ProviderBenefits />} />
+          <Route path="/get-verified" element={<GetVerified />} />
+          <Route path="/resources-tools" element={<ResourcesTools />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

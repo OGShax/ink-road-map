@@ -66,7 +66,7 @@ export const Footer = () => {
               </li>
               <li>
                 <button 
-                  onClick={() => window.open('https://docs.google.com/document/d/1234567890', '_blank')} 
+                  onClick={() => handleLinkClick('/how-it-works')} 
                   className="text-muted-foreground hover:text-primary transition-colors flex items-center gap-1"
                 >
                   <HelpCircle className="w-4 h-4" />
@@ -75,7 +75,7 @@ export const Footer = () => {
               </li>
               <li>
                 <button 
-                  onClick={() => window.open('https://help.proconnect.com', '_blank')} 
+                  onClick={() => handleLinkClick('/safety-guarantee')} 
                   className="text-muted-foreground hover:text-primary transition-colors flex items-center gap-1"
                 >
                   <Shield className="w-4 h-4" />
@@ -84,7 +84,7 @@ export const Footer = () => {
               </li>
               <li>
                 <button 
-                  onClick={() => window.open('https://support.proconnect.com', '_blank')} 
+                  onClick={() => handleLinkClick('/support')} 
                   className="text-muted-foreground hover:text-primary transition-colors flex items-center gap-1"
                 >
                   <MessageCircle className="w-4 h-4" />
