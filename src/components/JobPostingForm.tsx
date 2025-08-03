@@ -11,7 +11,7 @@ import { Progress } from "@/components/ui/progress";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { CalendarIcon, Upload, X, Move, AlertCircle, MapPin, DollarSign, Clock, Save, Info, CreditCard, Shield, Copy, Share2, ExternalLink, CheckCircle } from "lucide-react";
+import { CalendarIcon, Upload, X, Move, AlertCircle, MapPin, DollarSign, Clock, Save, Info, CreditCard, Shield, Copy, Share2, ExternalLink, CheckCircle, Facebook, Twitter, Linkedin, Mail, MessageCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
@@ -201,6 +201,36 @@ If you're interested or know someone who might be, please check out the details 
 #freelancer #${formData.category.replace(/\s+/g, '').toLowerCase()} #opportunity`;
 
     return { shortPost, detailedPost, linkedInPost, jobUrl };
+  };
+
+  const handleDirectShare = (platform: string, content: string) => {
+    const { jobUrl } = generateSharingContent();
+    const encodedContent = encodeURIComponent(content);
+    const encodedUrl = encodeURIComponent(jobUrl);
+    
+    let shareUrl = "";
+    
+    switch (platform) {
+      case "facebook":
+        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}&quote=${encodedContent}`;
+        break;
+      case "twitter":
+        shareUrl = `https://twitter.com/intent/tweet?text=${encodedContent}`;
+        break;
+      case "linkedin":
+        shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}&summary=${encodedContent}`;
+        break;
+      case "whatsapp":
+        shareUrl = `https://wa.me/?text=${encodedContent}`;
+        break;
+      case "email":
+        shareUrl = `mailto:?subject=${encodeURIComponent(`Job Opportunity: ${formData.title}`)}&body=${encodedContent}`;
+        break;
+    }
+    
+    if (shareUrl) {
+      window.open(shareUrl, '_blank', 'width=600,height=400');
+    }
   };
 
   const progress = (currentStep / steps.length) * 100;
@@ -1105,6 +1135,43 @@ If you're interested or know someone who might be, please check out the details 
                     <li>• Reach professionals in your network</li>
                     <li>• Increase project success rate</li>
                   </ul>
+                </CardContent>
+              </Card>
+
+              {/* Quick Share Buttons */}
+              <Card className="border-primary/20 bg-primary/5">
+                <CardHeader>
+                  <CardTitle className="text-base flex items-center gap-2">
+                    <Share2 size={16} />
+                    Quick Share Options
+                  </CardTitle>
+                  <CardDescription>Share directly to platforms with one click</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                    {[
+                      { platform: "facebook", label: "Facebook", icon: Facebook, content: "detailedPost" },
+                      { platform: "twitter", label: "Twitter/X", icon: Twitter, content: "shortPost" },
+                      { platform: "linkedin", label: "LinkedIn", icon: Linkedin, content: "linkedInPost" },
+                      { platform: "whatsapp", label: "WhatsApp", icon: MessageCircle, content: "shortPost" },
+                      { platform: "email", label: "Email", icon: Mail, content: "detailedPost" }
+                    ].map(({ platform, label, icon: Icon, content }) => {
+                      const { shortPost, detailedPost, linkedInPost } = generateSharingContent();
+                      const contentMap = { shortPost, detailedPost, linkedInPost };
+                      return (
+                        <Button
+                          key={platform}
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleDirectShare(platform, contentMap[content as keyof typeof contentMap])}
+                          className="flex flex-col items-center gap-2 h-auto p-3"
+                        >
+                          <Icon size={20} />
+                          <span className="text-xs">{label}</span>
+                        </Button>
+                      );
+                    })}
+                  </div>
                 </CardContent>
               </Card>
 
