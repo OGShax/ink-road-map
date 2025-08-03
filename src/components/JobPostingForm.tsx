@@ -21,9 +21,6 @@ interface JobFormData {
   category: string;
   address: string;
   paymentType: 'fixed' | 'hourly';
-  fixedPrice?: number;
-  hourlyRate?: number;
-  budgetMax?: number;
   urgencyLevel: 'asap' | 'within_week' | 'flexible';
   materialsProvided: boolean;
   biddingStartDate?: Date;
@@ -95,12 +92,6 @@ export const JobPostingForm = ({ onClose }: { onClose: () => void }) => {
         break;
       case 2:
         if (!formData.address.trim()) newErrors.address = "Address is required";
-        if (formData.paymentType === "fixed" && !formData.fixedPrice) {
-          newErrors.fixedPrice = "Fixed price is required";
-        }
-        if (formData.paymentType === "hourly") {
-          if (!formData.hourlyRate) newErrors.hourlyRate = "Hourly rate is required";
-        }
         break;
       case 3:
         if (!formData.biddingStartDate) newErrors.biddingStartDate = "Bidding start date is required";
@@ -319,8 +310,11 @@ export const JobPostingForm = ({ onClose }: { onClose: () => void }) => {
                 <div>
                   <Label className="flex items-center gap-2">
                     <DollarSign size={16} />
-                    Payment Type
+                    How Should Providers Submit Bids?
                   </Label>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Choose how you want providers to structure their proposals and pricing
+                  </p>
                   <div className="grid grid-cols-2 gap-4">
                     <Card 
                       className={cn(
@@ -340,8 +334,8 @@ export const JobPostingForm = ({ onClose }: { onClose: () => void }) => {
                               : "border-muted-foreground"
                           )} />
                           <div>
-                            <p className="font-medium">Fixed Price</p>
-                            <p className="text-sm text-muted-foreground">One-time payment for the entire project</p>
+                            <p className="font-medium">Fixed Project Price</p>
+                            <p className="text-sm text-muted-foreground">Providers bid with a total project cost</p>
                           </div>
                         </div>
                       </CardContent>
@@ -365,8 +359,8 @@ export const JobPostingForm = ({ onClose }: { onClose: () => void }) => {
                               : "border-muted-foreground"
                           )} />
                           <div>
-                            <p className="font-medium">Pay by Hour</p>
-                            <p className="text-sm text-muted-foreground">Payment based on time worked</p>
+                            <p className="font-medium">Hourly Rate</p>
+                            <p className="text-sm text-muted-foreground">Providers bid with their hourly rate</p>
                           </div>
                         </div>
                       </CardContent>
@@ -374,57 +368,24 @@ export const JobPostingForm = ({ onClose }: { onClose: () => void }) => {
                   </div>
                 </div>
 
-                {formData.paymentType === "fixed" && (
-                  <div>
-                    <Label htmlFor="fixedPrice" className="flex items-center gap-2">
-                      Fixed Price
-                      <span className="text-destructive">*</span>
-                    </Label>
-                    <div className="relative">
-                      <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={16} />
-                      <Input
-                        id="fixedPrice"
-                        type="number"
-                        placeholder="0.00"
-                        className={cn("pl-10", errors.fixedPrice ? "border-destructive" : "")}
-                        value={formData.fixedPrice || ""}
-                        onChange={(e) => updateFormData("fixedPrice", parseFloat(e.target.value))}
-                      />
-                    </div>
-                    {errors.fixedPrice && (
-                      <p className="text-sm text-destructive flex items-center gap-1 mt-1">
-                        <AlertCircle size={14} />
-                        {errors.fixedPrice}
-                      </p>
+                <div className="bg-muted/50 p-4 rounded-lg">
+                  <h3 className="font-medium mb-2">Bidding Structure</h3>
+                  <div className="text-sm text-muted-foreground space-y-2">
+                    {formData.paymentType === "fixed" ? (
+                      <div>
+                        <p>• Providers will submit bids with a <strong>total project cost</strong></p>
+                        <p>• You'll see proposals with complete project pricing</p>
+                        <p>• Best for projects with well-defined scope and deliverables</p>
+                      </div>
+                    ) : (
+                      <div>
+                        <p>• Providers will submit bids with their <strong>hourly rate</strong></p>
+                        <p>• You'll need to estimate project duration</p>
+                        <p>• Best for ongoing work or projects with flexible scope</p>
+                      </div>
                     )}
                   </div>
-                )}
-
-                {formData.paymentType === "hourly" && (
-                  <div>
-                    <Label htmlFor="hourlyRate" className="flex items-center gap-2">
-                      Hourly Rate
-                      <span className="text-destructive">*</span>
-                    </Label>
-                    <div className="relative">
-                      <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={16} />
-                      <Input
-                        id="hourlyRate"
-                        type="number"
-                        placeholder="0.00"
-                        className={cn("pl-10", errors.hourlyRate ? "border-destructive" : "")}
-                        value={formData.hourlyRate || ""}
-                        onChange={(e) => updateFormData("hourlyRate", parseFloat(e.target.value))}
-                      />
-                    </div>
-                    {errors.hourlyRate && (
-                      <p className="text-sm text-destructive flex items-center gap-1 mt-1">
-                        <AlertCircle size={14} />
-                        {errors.hourlyRate}
-                      </p>
-                    )}
-                  </div>
-                )}
+                </div>
 
                 {/* Platform Fees & Monetization Explanation */}
                 <Card className="border-blue-500/20 bg-blue-500/5">
@@ -483,51 +444,24 @@ export const JobPostingForm = ({ onClose }: { onClose: () => void }) => {
                       <div className="text-xs text-blue-700 dark:text-blue-400 space-y-1">
                         <div className="flex justify-between">
                           <span>Project Value:</span>
-                          <span className="font-medium">
-                            {formData.paymentType === "fixed" && formData.fixedPrice 
-                              ? `$${formData.fixedPrice.toLocaleString()}`
-                              : formData.paymentType === "hourly" && formData.hourlyRate
-                              ? `$${formData.hourlyRate}/hour × estimated hours`
-                              : "$1,000 (example)"
-                            }
-                          </span>
+                          <span className="font-medium">$1,000 (example)</span>
                         </div>
                         <div className="flex justify-between">
                           <span>Your Service Fee (2.5%):</span>
-                          <span className="font-medium">
-                            {formData.paymentType === "fixed" && formData.fixedPrice 
-                              ? `$${(formData.fixedPrice * 0.025).toFixed(2)}`
-                              : "$25"
-                            }
-                          </span>
+                          <span className="font-medium">$25</span>
                         </div>
                         <div className="flex justify-between">
                           <span>Provider Service Fee (2.5%):</span>
-                          <span className="font-medium">
-                            {formData.paymentType === "fixed" && formData.fixedPrice 
-                              ? `$${(formData.fixedPrice * 0.025).toFixed(2)}`
-                              : "$25"
-                            }
-                          </span>
+                          <span className="font-medium">$25</span>
                         </div>
                         <div className="flex justify-between">
                           <span>Payment Processing:</span>
-                          <span className="font-medium">
-                            {formData.paymentType === "fixed" && formData.fixedPrice 
-                              ? `$${(formData.fixedPrice * 0.029 + 0.30).toFixed(2)}`
-                              : "$29.30"
-                            }
-                          </span>
+                          <span className="font-medium">$29.30</span>
                         </div>
                         <div className="border-t border-blue-200 dark:border-blue-700 pt-1 mt-2">
                           <div className="flex justify-between font-medium">
                             <span>Total Platform Fees:</span>
-                            <span>
-                              {formData.paymentType === "fixed" && formData.fixedPrice 
-                                ? `$${(formData.fixedPrice * 0.079 + 0.30).toFixed(2)}`
-                                : "$79.30"
-                              }
-                            </span>
+                            <span>$79.30</span>
                           </div>
                         </div>
                       </div>
@@ -541,22 +475,6 @@ export const JobPostingForm = ({ onClose }: { onClose: () => void }) => {
                   </CardContent>
                 </Card>
 
-                <div>
-                  <Label>Budget Range (Optional)</Label>
-                  <div className="relative">
-                    <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={16} />
-                    <Input
-                      type="number"
-                      placeholder="Maximum budget"
-                      className="pl-10"
-                      value={formData.budgetMax || ""}
-                      onChange={(e) => updateFormData("budgetMax", parseFloat(e.target.value))}
-                    />
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Optional: Set a maximum budget to help filter proposals
-                  </p>
-                </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
@@ -935,17 +853,14 @@ export const JobPostingForm = ({ onClose }: { onClose: () => void }) => {
                       </div>
 
                       <div>
-                        <h4 className="font-medium mb-2">Budget</h4>
+                        <h4 className="font-medium mb-2">Bidding Structure</h4>
                         <p className="text-muted-foreground flex items-center gap-1">
                           <DollarSign size={14} />
                           {formData.paymentType === "fixed" 
-                            ? `$${formData.fixedPrice?.toLocaleString() || "0"} (Fixed)`
-                            : `$${formData.hourlyRate || "0"}/hour`
+                            ? "Providers bid with total project cost"
+                            : "Providers bid with hourly rates"
                           }
                         </p>
-                        {formData.budgetMax && (
-                          <p className="text-xs text-muted-foreground">Max budget: ${formData.budgetMax.toLocaleString()}</p>
-                        )}
                       </div>
                     </div>
 
