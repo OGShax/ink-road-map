@@ -448,6 +448,45 @@ export const ProviderProfile = () => {
                 </ul>
               </CardContent>
             </Card>
+
+            {/* Reviews Section - Moved to About Tab */}
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h4 className="font-medium flex items-center gap-2">
+                    <Star size={16} className="text-yellow-500" />
+                    Reviews
+                  </h4>
+                  <div className="flex items-center gap-2">
+                    <Star size={18} className="text-yellow-500 fill-current" />
+                    <span className="font-medium">{mockProvider.rating}</span>
+                    <span className="text-muted-foreground">({mockProvider.reviewCount} reviews)</span>
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  {mockProvider.reviews.map((review) => (
+                    <div key={review.id} className="flex gap-3 p-4 bg-muted/50 rounded-lg">
+                      <Avatar className="w-10 h-10">
+                        <AvatarImage src={review.avatar} alt={review.name} />
+                        <AvatarFallback>{review.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="font-medium text-sm">{review.name}</span>
+                          <div className="flex items-center">
+                            {[...Array(review.rating)].map((_, i) => (
+                              <Star key={i} size={12} className="text-yellow-500 fill-current" />
+                            ))}
+                          </div>
+                          <span className="text-xs text-muted-foreground">{review.date}</span>
+                        </div>
+                        <p className="text-sm text-muted-foreground">{review.comment}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
 
           {/* Staff Tab */}
@@ -512,41 +551,6 @@ export const ProviderProfile = () => {
           </TabsContent>
         </Tabs>
 
-        {/* Reviews Section */}
-        <Card className="mb-8">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xl font-semibold">Reviews</h3>
-              <div className="flex items-center gap-2">
-                <Star size={20} className="text-yellow-500 fill-current" />
-                <span className="font-medium">{mockProvider.rating}</span>
-                <span className="text-muted-foreground">({mockProvider.reviewCount} reviews)</span>
-              </div>
-            </div>
-            <div className="space-y-4">
-              {mockProvider.reviews.map((review) => (
-                <div key={review.id} className="flex gap-3 p-4 bg-muted/50 rounded-lg">
-                  <Avatar className="w-10 h-10">
-                    <AvatarImage src={review.avatar} alt={review.name} />
-                    <AvatarFallback>{review.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="font-medium text-sm">{review.name}</span>
-                      <div className="flex items-center">
-                        {[...Array(review.rating)].map((_, i) => (
-                          <Star key={i} size={12} className="text-yellow-500 fill-current" />
-                        ))}
-                      </div>
-                      <span className="text-xs text-muted-foreground">{review.date}</span>
-                    </div>
-                    <p className="text-sm text-muted-foreground">{review.comment}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
       </div>
     </div>
   );
