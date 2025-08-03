@@ -19,7 +19,7 @@ const norwegianLocations: Location[] = [
     id: '1',
     name: 'Bergen',
     address: 'Bryggen, Bergen',
-    coordinates: { x: 20, y: 65 },
+    coordinates: { x: 22, y: 68 }, // More accurate western coast position
     status: 'completed',
     date: 'Jan 15'
   },
@@ -27,7 +27,7 @@ const norwegianLocations: Location[] = [
     id: '2',
     name: 'Stavanger',
     address: 'Old Town, Stavanger',
-    coordinates: { x: 25, y: 80 },
+    coordinates: { x: 26, y: 78 }, // Southwest coast
     status: 'current',
     arrivalTime: 'Now',
     duration: '3 days',
@@ -37,7 +37,7 @@ const norwegianLocations: Location[] = [
     id: '3',
     name: 'Oslo',
     address: 'Karl Johans gate, Oslo',
-    coordinates: { x: 55, y: 70 },
+    coordinates: { x: 52, y: 75 }, // Eastern location near Oslofjord
     status: 'upcoming',
     arrivalTime: '2:00 PM',
     duration: '4 days',
@@ -47,7 +47,7 @@ const norwegianLocations: Location[] = [
     id: '4',
     name: 'Trondheim',
     address: 'Bakklandet, Trondheim',
-    coordinates: { x: 50, y: 45 },
+    coordinates: { x: 48, y: 50 }, // Central Norway
     status: 'upcoming',
     arrivalTime: '10:00 AM',
     duration: '3 days',
@@ -57,7 +57,7 @@ const norwegianLocations: Location[] = [
     id: '5',
     name: 'Tromsø',
     address: 'Northern Lights City',
-    coordinates: { x: 65, y: 15 },
+    coordinates: { x: 62, y: 20 }, // Northern Norway
     status: 'upcoming',
     arrivalTime: '1:00 PM',
     duration: '5 days',
@@ -238,54 +238,150 @@ const NorwayMap: React.FC<{
     <svg viewBox="0 0 100 100" className="w-full h-full">
       {/* Norway coastline and landmass */}
       <defs>
-        <linearGradient id="norwayGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#22c55e" stopOpacity="0.3" />
-          <stop offset="50%" stopColor="#059669" stopOpacity="0.2" />
-          <stop offset="100%" stopColor="#047857" stopOpacity="0.3" />
+        <linearGradient id="norwayLand" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#16a34a" stopOpacity="0.4" />
+          <stop offset="30%" stopColor="#22c55e" stopOpacity="0.3" />
+          <stop offset="70%" stopColor="#059669" stopOpacity="0.35" />
+          <stop offset="100%" stopColor="#047857" stopOpacity="0.4" />
+        </linearGradient>
+        <linearGradient id="mountainGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#94a3b8" stopOpacity="0.8" />
+          <stop offset="50%" stopColor="#64748b" stopOpacity="0.6" />
+          <stop offset="100%" stopColor="#475569" stopOpacity="0.8" />
         </linearGradient>
         <linearGradient id="waterGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#0ea5e9" stopOpacity="0.2" />
-          <stop offset="100%" stopColor="#0284c7" stopOpacity="0.3" />
+          <stop offset="0%" stopColor="#0ea5e9" stopOpacity="0.15" />
+          <stop offset="50%" stopColor="#0284c7" stopOpacity="0.25" />
+          <stop offset="100%" stopColor="#0369a1" stopOpacity="0.2" />
         </linearGradient>
+        <linearGradient id="fjordGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#0284c7" stopOpacity="0.6" />
+          <stop offset="100%" stopColor="#0369a1" stopOpacity="0.8" />
+        </linearGradient>
+        <radialGradient id="islandGradient" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#22c55e" stopOpacity="0.4" />
+          <stop offset="100%" stopColor="#047857" stopOpacity="0.6" />
+        </radialGradient>
       </defs>
       
-      {/* Water/Ocean background */}
+      {/* North Sea and Norwegian Sea background */}
       <rect width="100" height="100" fill="url(#waterGradient)" />
       
-      {/* Norway landmass (simplified outline) */}
+      {/* Norway mainland - much more realistic coastline */}
       <path
-        d="M15 10 
-           L25 8 L35 12 L45 10 L55 15 L65 12 L75 18 L80 25 
-           L85 35 L80 45 L75 55 L70 65 L65 70 L60 75 L55 78 
-           L50 82 L45 85 L40 88 L35 90 L30 88 L25 85 L20 82 
-           L18 78 L15 75 L12 70 L10 65 L8 60 L10 55 L12 50 
-           L15 45 L12 40 L10 35 L8 30 L10 25 L12 20 L15 15 Z"
-        fill="url(#norwayGradient)"
+        d="M20 95 
+           L18 92 L16 88 L15 85 L14 82 L15 78 L17 75 
+           L19 72 L21 68 L20 65 L18 62 L17 58 L19 55 
+           L21 52 L23 48 L25 45 L27 42 L26 38 L24 35 
+           L23 32 L25 28 L27 25 L29 22 L32 19 L35 17 
+           L38 15 L41 13 L44 12 L47 11 L50 10 L53 9 
+           L56 8 L59 7 L62 6 L65 5 L68 4 L71 3 L74 2 
+           L77 3 L80 4 L82 6 L84 8 L85 11 L86 14 
+           L87 17 L88 20 L89 23 L90 26 L91 29 L92 32 
+           L93 35 L94 38 L95 41 L94 44 L93 47 L92 50 
+           L91 53 L90 56 L89 59 L88 62 L87 65 L86 68 
+           L85 71 L84 74 L83 77 L82 80 L81 83 L80 86 
+           L78 89 L76 92 L74 94 L71 95 L68 96 L65 95 
+           L62 94 L59 93 L56 92 L53 91 L50 90 L47 89 
+           L44 88 L41 87 L38 86 L35 85 L32 84 L29 85 
+           L26 86 L23 88 L20 90 L18 92 L20 95 Z"
+        fill="url(#norwayLand)"
         stroke="#047857"
-        strokeWidth="0.5"
+        strokeWidth="0.3"
       />
       
-      {/* Fjords and coastal details */}
+      {/* Lofoten Islands */}
+      <ellipse cx="58" cy="25" rx="3" ry="1.5" fill="url(#islandGradient)" stroke="#047857" strokeWidth="0.2" />
+      <ellipse cx="61" cy="24" rx="2" ry="1" fill="url(#islandGradient)" stroke="#047857" strokeWidth="0.2" />
+      <ellipse cx="64" cy="23" rx="2.5" ry="1.2" fill="url(#islandGradient)" stroke="#047857" strokeWidth="0.2" />
+      
+      {/* Svalbard (far north) */}
+      <ellipse cx="70" cy="2" rx="4" ry="2" fill="url(#islandGradient)" stroke="#047857" strokeWidth="0.2" />
+      
+      {/* Western fjords - detailed */}
       <path
-        d="M15 30 Q20 28 25 30 Q30 32 35 30"
+        d="M20 65 Q18 63 19 61 Q21 59 20 57 Q18 55 19 53"
         fill="none"
-        stroke="#0284c7"
-        strokeWidth="1"
-        opacity="0.6"
+        stroke="url(#fjordGradient)"
+        strokeWidth="0.8"
       />
       <path
-        d="M40 25 Q45 23 50 25 Q55 27 60 25"
+        d="M22 72 Q20 70 21 68 Q23 66 22 64"
         fill="none"
-        stroke="#0284c7"
-        strokeWidth="1"
-        opacity="0.6"
+        stroke="url(#fjordGradient)"
+        strokeWidth="0.6"
+      />
+      <path
+        d="M25 45 Q23 43 24 41 Q26 39 25 37"
+        fill="none"
+        stroke="url(#fjordGradient)"
+        strokeWidth="0.7"
       />
       
-      {/* Mountain ranges */}
-      <circle cx="30" cy="40" r="2" fill="#94a3b8" opacity="0.7" />
-      <circle cx="45" cy="35" r="3" fill="#94a3b8" opacity="0.7" />
-      <circle cx="60" cy="30" r="2.5" fill="#94a3b8" opacity="0.7" />
-      <circle cx="35" cy="55" r="2" fill="#94a3b8" opacity="0.7" />
+      {/* Geirangerfjord */}
+      <path
+        d="M26 58 Q24 56 25 54 Q27 52 26 50"
+        fill="none"
+        stroke="url(#fjordGradient)"
+        strokeWidth="0.8"
+      />
+      
+      {/* Nærøyfjord */}
+      <path
+        d="M23 62 Q21 60 22 58 Q24 56 23 54"
+        fill="none"
+        stroke="url(#fjordGradient)"
+        strokeWidth="0.7"
+      />
+      
+      {/* Oslofjord */}
+      <path
+        d="M52 75 Q50 73 51 71 Q53 69 52 67"
+        fill="none"
+        stroke="url(#fjordGradient)"
+        strokeWidth="1"
+      />
+      
+      {/* Norwegian mountain ranges */}
+      
+      {/* Jotunheimen (highest peaks) */}
+      <ellipse cx="42" cy="62" rx="3" ry="2" fill="url(#mountainGradient)" opacity="0.8" />
+      <circle cx="43" cy="61" r="1.5" fill="#64748b" opacity="0.9" />
+      <circle cx="41" cy="63" r="1.2" fill="#64748b" opacity="0.9" />
+      
+      {/* Rondane */}
+      <ellipse cx="48" cy="58" rx="2.5" ry="1.8" fill="url(#mountainGradient)" opacity="0.7" />
+      <circle cx="49" cy="57" r="1" fill="#64748b" opacity="0.8" />
+      
+      {/* Dovre Mountains */}
+      <ellipse cx="45" cy="52" rx="2" ry="1.5" fill="url(#mountainGradient)" opacity="0.7" />
+      
+      {/* Scandinavian Mountains (western spine) */}
+      <ellipse cx="35" cy="45" rx="4" ry="8" fill="url(#mountainGradient)" opacity="0.6" />
+      <ellipse cx="38" cy="40" rx="2" ry="3" fill="#64748b" opacity="0.7" />
+      <ellipse cx="32" cy="50" rx="2.5" ry="4" fill="#64748b" opacity="0.6" />
+      
+      {/* Lyngen Alps (northern) */}
+      <ellipse cx="62" cy="22" rx="2" ry="1.5" fill="url(#mountainGradient)" opacity="0.8" />
+      <circle cx="63" cy="21" r="0.8" fill="#64748b" opacity="0.9" />
+      
+      {/* Major highways */}
+      <path
+        d="M26 78 Q35 75 45 72 Q55 69 65 66"
+        fill="none"
+        stroke="#374151"
+        strokeWidth="0.3"
+        opacity="0.4"
+        strokeDasharray="1,1"
+      />
+      <path
+        d="M52 75 Q50 65 48 55 Q46 45 44 35"
+        fill="none"
+        stroke="#374151"
+        strokeWidth="0.3"
+        opacity="0.4"
+        strokeDasharray="1,1"
+      />
       
       {/* Route lines between locations */}
       {locations.slice(0, -1).map((location, index) => {
@@ -309,9 +405,9 @@ const NorwayMap: React.FC<{
             <path
               d={roadPath}
               fill="none"
-              stroke="#374151"
-              strokeWidth="2"
-              opacity="0.3"
+              stroke="#1f2937"
+              strokeWidth="2.5"
+              opacity="0.4"
               strokeDasharray="none"
             />
             {/* Route line */}
@@ -319,15 +415,15 @@ const NorwayMap: React.FC<{
               d={roadPath}
               fill="none"
               stroke={getRouteColor()}
-              strokeWidth="1.5"
-              opacity="0.8"
-              strokeDasharray="3,2"
+              strokeWidth="2"
+              opacity="0.9"
+              strokeDasharray="4,2"
               className="route-line"
             >
               <animate
                 attributeName="stroke-dashoffset"
-                values="0;-10"
-                dur="2s"
+                values="0;-12"
+                dur="3s"
                 repeatCount="indefinite"
               />
             </path>
@@ -343,26 +439,33 @@ const NorwayMap: React.FC<{
           className="cursor-pointer location-marker"
           onClick={() => onLocationSelect(location)}
         >
-          {/* Marker background */}
+          {/* Marker background glow */}
           <circle
-            r="3"
+            r="4"
             fill={getStatusColor(location.status)}
-            opacity="0.3"
+            opacity="0.2"
             className={location.status === 'current' ? 'animate-pulse' : ''}
           />
           
           {/* Marker icon */}
           <circle
-            r="2"
+            r="2.5"
             fill={getStatusColor(location.status)}
             stroke="white"
-            strokeWidth="0.5"
+            strokeWidth="0.8"
+          />
+          
+          {/* Inner marker dot */}
+          <circle
+            r="1"
+            fill="white"
+            opacity="0.9"
           />
           
           {/* Location label */}
           <text
             x="0"
-            y="-4"
+            y="-6"
             textAnchor="middle"
             className="text-[3px] font-bold fill-current"
             style={{ fill: getStatusColor(location.status) }}
@@ -372,14 +475,24 @@ const NorwayMap: React.FC<{
           
           {/* Selection indicator */}
           {selectedLocation?.id === location.id && (
-            <circle
-              r="4"
-              fill="none"
-              stroke="#ec4899"
-              strokeWidth="0.5"
-              opacity="0.8"
-              className="animate-pulse"
-            />
+            <>
+              <circle
+                r="5"
+                fill="none"
+                stroke="#ec4899"
+                strokeWidth="0.8"
+                opacity="0.8"
+                className="animate-pulse"
+              />
+              <circle
+                r="6.5"
+                fill="none"
+                stroke="#ec4899"
+                strokeWidth="0.4"
+                opacity="0.4"
+                className="animate-pulse"
+              />
+            </>
           )}
         </g>
       ))}
@@ -390,17 +503,42 @@ const NorwayMap: React.FC<{
         currentLocationIndex={currentLocationIndex}
       />
       
-      {/* Compass */}
+      {/* Compass rose */}
       <g transform="translate(85, 15)">
-        <circle r="3" fill="rgba(0,0,0,0.1)" />
-        <text x="0" y="-1" textAnchor="middle" className="text-[2px] font-bold" fill="#374151">N</text>
-        <text x="0" y="2" textAnchor="middle" className="text-[1.5px]" fill="#6b7280">↑</text>
+        <circle r="4" fill="rgba(0,0,0,0.1)" stroke="#374151" strokeWidth="0.3" />
+        <path d="M0,-3 L1,0 L0,3 L-1,0 Z" fill="#374151" />
+        <text x="0" y="-6" textAnchor="middle" className="text-[2.5px] font-bold" fill="#374151">N</text>
+        <text x="5" y="1" textAnchor="middle" className="text-[1.5px]" fill="#6b7280">Ø</text>
+        <text x="0" y="8" textAnchor="middle" className="text-[1.5px]" fill="#6b7280">S</text>
+        <text x="-5" y="1" textAnchor="middle" className="text-[1.5px]" fill="#6b7280">V</text>
       </g>
       
       {/* Scale indicator */}
-      <g transform="translate(10, 90)">
-        <line x1="0" y1="0" x2="10" y2="0" stroke="#374151" strokeWidth="0.5" />
-        <text x="5" y="3" textAnchor="middle" className="text-[2px]" fill="#6b7280">100km</text>
+      <g transform="translate(8, 88)">
+        <rect x="0" y="0" width="15" height="4" fill="rgba(255,255,255,0.8)" stroke="#374151" strokeWidth="0.2" rx="1" />
+        <line x1="2" y1="1" x2="7" y2="1" stroke="#374151" strokeWidth="0.5" />
+        <line x1="7" y1="1" x2="13" y2="1" stroke="#6b7280" strokeWidth="0.5" />
+        <text x="7.5" y="3" textAnchor="middle" className="text-[1.8px] font-medium" fill="#374151">200km</text>
+        <text x="2" y="0.5" textAnchor="start" className="text-[1px]" fill="#6b7280">0</text>
+        <text x="13" y="0.5" textAnchor="end" className="text-[1px]" fill="#6b7280">400</text>
+      </g>
+      
+      {/* Legend */}
+      <g transform="translate(8, 12)">
+        <rect x="0" y="0" width="20" height="12" fill="rgba(255,255,255,0.9)" stroke="#374151" strokeWidth="0.2" rx="1" />
+        <text x="1" y="2.5" className="text-[1.5px] font-bold" fill="#374151">Terreng</text>
+        
+        <circle cx="2" cy="4.5" r="0.8" fill="#22c55e" opacity="0.6" />
+        <text x="4" y="5" className="text-[1.2px]" fill="#374151">Land</text>
+        
+        <circle cx="2" cy="6.5" r="0.8" fill="#64748b" opacity="0.8" />
+        <text x="4" y="7" className="text-[1.2px]" fill="#374151">Fjell</text>
+        
+        <rect x="1.5" y="8" width="1" height="0.5" fill="#0284c7" opacity="0.7" />
+        <text x="4" y="8.5" className="text-[1.2px]" fill="#374151">Fjord</text>
+        
+        <circle cx="2" cy="10.5" r="0.5" fill="#ec4899" />
+        <text x="4" y="11" className="text-[1.2px]" fill="#374151">Reise</text>
       </g>
     </svg>
   );
