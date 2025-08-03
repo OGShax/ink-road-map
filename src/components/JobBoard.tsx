@@ -7,9 +7,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Search, Filter, Users, TrendingUp, DollarSign, Clock, MapPin, X, Briefcase, Palette, Code, BarChart3, Camera } from "lucide-react";
+import { Slider } from "@/components/ui/slider";
+import { Plus, Search, Filter, Users, TrendingUp, DollarSign, Clock, MapPin, X, Briefcase, Palette, Code, BarChart3, Camera, ChevronDown, ChevronUp, HelpCircle, Star, Share2, MessageCircle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import proConnectLogo from "@/assets/proconnect-logo.png";
+import teamCollaboration from "@/assets/team-collaboration.jpg";
+import remoteWork from "@/assets/remote-work.jpg";
+import creativeProcess from "@/assets/creative-process.jpg";
 
 const mockJobs = [
   {
@@ -122,6 +127,9 @@ export const JobBoard = () => {
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [locationFilter, setLocationFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [showAllCategories, setShowAllCategories] = useState(false);
+  const [kmRange, setKmRange] = useState([50]);
+  const [showTips, setShowTips] = useState(false);
 
   // Handle deep linking to job details
   useEffect(() => {
@@ -218,26 +226,195 @@ export const JobBoard = () => {
           ))}
         </div>
 
-        {/* Quick Category Filters */}
-        <div className="mb-6">
-          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-            <Filter size={20} />
-            Browse by Category
-          </h3>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-            {categories.map((category) => (
-              <Button
-                key={category.value}
-                variant={categoryFilter === category.value ? "default" : "outline"}
-                onClick={() => setCategoryFilter(category.value)}
-                className="flex items-center gap-2 h-auto py-3 px-4 justify-start hover:scale-105 transition-all"
-              >
-                <category.icon size={18} className={category.color} />
-                <span className="text-xs font-medium">{category.label}</span>
-              </Button>
-            ))}
-          </div>
+        {/* Interactive Professional Images */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <Card className="group cursor-pointer hover:shadow-xl transition-all duration-500 overflow-hidden">
+            <div className="relative h-48 overflow-hidden">
+              <img 
+                src={teamCollaboration} 
+                alt="Team Collaboration" 
+                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+              <div className="absolute bottom-4 left-4 text-white">
+                <h3 className="font-semibold text-lg">Connect & Collaborate</h3>
+                <p className="text-sm opacity-90">Join thousands of professionals</p>
+              </div>
+            </div>
+          </Card>
+          <Card className="group cursor-pointer hover:shadow-xl transition-all duration-500 overflow-hidden">
+            <div className="relative h-48 overflow-hidden">
+              <img 
+                src={remoteWork} 
+                alt="Remote Work" 
+                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+              <div className="absolute bottom-4 left-4 text-white">
+                <h3 className="font-semibold text-lg">Work Anywhere</h3>
+                <p className="text-sm opacity-90">Remote opportunities await</p>
+              </div>
+            </div>
+          </Card>
+          <Card className="group cursor-pointer hover:shadow-xl transition-all duration-500 overflow-hidden">
+            <div className="relative h-48 overflow-hidden">
+              <img 
+                src={creativeProcess} 
+                alt="Creative Process" 
+                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+              <div className="absolute bottom-4 left-4 text-white">
+                <h3 className="font-semibold text-lg">Create & Innovate</h3>
+                <p className="text-sm opacity-90">Bring your ideas to life</p>
+              </div>
+            </div>
+          </Card>
         </div>
+
+        {/* Jobs in My Area Section */}
+        <Card className="mb-6 shadow-md bg-gradient-to-r from-primary/5 to-accent/5">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold flex items-center gap-2">
+                <MapPin size={20} className="text-primary" />
+                Jobs in My Area
+              </h3>
+              <Button variant="outline" size="sm" onClick={() => setShowTips(!showTips)}>
+                <HelpCircle size={16} className="mr-2" />
+                How to use
+              </Button>
+            </div>
+            <div className="space-y-4">
+              <div className="flex items-center gap-4">
+                <span className="text-sm font-medium min-w-fit">Search radius:</span>
+                <div className="flex-1 max-w-md">
+                  <Slider
+                    value={kmRange}
+                    onValueChange={setKmRange}
+                    max={200}
+                    min={5}
+                    step={5}
+                    className="w-full"
+                  />
+                </div>
+                <Badge variant="secondary" className="min-w-fit">
+                  {kmRange[0]} km
+                </Badge>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Showing jobs within {kmRange[0]}km of your location. Enable location services for more accurate results.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Tips Section */}
+        {showTips && (
+          <Card className="mb-6 border-primary/20 bg-primary/5">
+            <CardContent className="pt-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold flex items-center gap-2">
+                  <Star size={20} className="text-primary" />
+                  Tips for Using ProConnect
+                </h3>
+                <Button variant="ghost" size="sm" onClick={() => setShowTips(false)}>
+                  <X size={16} />
+                </Button>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <div className="space-y-2">
+                  <div className="flex items-start gap-2">
+                    <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0" />
+                    <div>
+                      <p className="font-medium">Perfect Your Profile</p>
+                      <p className="text-muted-foreground">Complete profiles get 3x more responses</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0" />
+                    <div>
+                      <p className="font-medium">Bid Strategically</p>
+                      <p className="text-muted-foreground">Research market rates before bidding</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-start gap-2">
+                    <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0" />
+                    <div>
+                      <p className="font-medium">Share Quality Work</p>
+                      <p className="text-muted-foreground">Use the share button to showcase projects</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0" />
+                    <div>
+                      <p className="font-medium">Stay Active</p>
+                      <p className="text-muted-foreground">Regular activity improves your visibility</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="mt-4 flex gap-2">
+                <Button size="sm" variant="outline" className="flex items-center gap-2">
+                  <Share2 size={14} />
+                  Share ProConnect
+                </Button>
+                <Button size="sm" variant="outline" className="flex items-center gap-2">
+                  <MessageCircle size={14} />
+                  Join Community
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Collapsible Category Filters */}
+        <Card className="mb-6 shadow-md">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold flex items-center gap-2">
+                <Filter size={20} />
+                Browse by Category
+              </h3>
+            </div>
+            
+            <Collapsible open={showAllCategories} onOpenChange={setShowAllCategories}>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+                {categories.slice(0, showAllCategories ? categories.length : 4).map((category) => (
+                  <Button
+                    key={category.value}
+                    variant={categoryFilter === category.value ? "default" : "outline"}
+                    onClick={() => setCategoryFilter(category.value)}
+                    className="flex items-center gap-2 h-auto py-3 px-4 justify-start hover:scale-105 transition-all"
+                  >
+                    <category.icon size={18} className={category.color} />
+                    <span className="text-xs font-medium">{category.label}</span>
+                  </Button>
+                ))}
+              </div>
+              
+              {categories.length > 4 && (
+                <CollapsibleTrigger asChild>
+                  <Button variant="ghost" className="w-full mt-3 flex items-center gap-2 text-muted-foreground hover:text-foreground">
+                    {showAllCategories ? (
+                      <>
+                        <ChevronUp size={16} />
+                        Show Less Categories
+                      </>
+                    ) : (
+                      <>
+                        <ChevronDown size={16} />
+                        Show More Categories ({categories.length - 4} more)
+                      </>
+                    )}
+                  </Button>
+                </CollapsibleTrigger>
+              )}
+            </Collapsible>
+          </CardContent>
+        </Card>
 
         {/* Search and Advanced Filters */}
         <Card className="mb-8 shadow-md">
