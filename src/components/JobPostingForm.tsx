@@ -21,6 +21,7 @@ interface JobFormData {
   category: string;
   address: string;
   paymentType: 'fixed' | 'hourly';
+  approximatedBudget?: number;
   urgencyLevel: 'asap' | 'within_week' | 'flexible';
   materialsProvided: boolean;
   biddingStartDate?: Date;
@@ -387,6 +388,27 @@ export const JobPostingForm = ({ onClose }: { onClose: () => void }) => {
                   </div>
                 </div>
 
+                <div>
+                  <Label htmlFor="approximatedBudget" className="flex items-center gap-2">
+                    <DollarSign size={16} />
+                    Approximated Budget (Optional)
+                  </Label>
+                  <div className="relative">
+                    <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={16} />
+                    <Input
+                      id="approximatedBudget"
+                      type="number"
+                      placeholder="e.g., 5000"
+                      className="pl-10"
+                      value={formData.approximatedBudget || ""}
+                      onChange={(e) => updateFormData("approximatedBudget", parseFloat(e.target.value))}
+                    />
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Share your budget expectations to help providers submit more targeted bids. This helps attract realistic proposals within your range.
+                  </p>
+                </div>
+
                 {/* Platform Fees & Monetization Explanation */}
                 <Card className="border-blue-500/20 bg-blue-500/5">
                   <CardHeader className="pb-3">
@@ -444,24 +466,49 @@ export const JobPostingForm = ({ onClose }: { onClose: () => void }) => {
                       <div className="text-xs text-blue-700 dark:text-blue-400 space-y-1">
                         <div className="flex justify-between">
                           <span>Project Value:</span>
-                          <span className="font-medium">$1,000 (example)</span>
+                          <span className="font-medium">
+                            {formData.approximatedBudget 
+                              ? `$${formData.approximatedBudget.toLocaleString()} (your budget)`
+                              : "$1,000 (example)"
+                            }
+                          </span>
                         </div>
                         <div className="flex justify-between">
                           <span>Your Service Fee (2.5%):</span>
-                          <span className="font-medium">$25</span>
+                          <span className="font-medium">
+                            {formData.approximatedBudget 
+                              ? `$${(formData.approximatedBudget * 0.025).toFixed(2)}`
+                              : "$25"
+                            }
+                          </span>
                         </div>
                         <div className="flex justify-between">
                           <span>Provider Service Fee (2.5%):</span>
-                          <span className="font-medium">$25</span>
+                          <span className="font-medium">
+                            {formData.approximatedBudget 
+                              ? `$${(formData.approximatedBudget * 0.025).toFixed(2)}`
+                              : "$25"
+                            }
+                          </span>
                         </div>
                         <div className="flex justify-between">
                           <span>Payment Processing:</span>
-                          <span className="font-medium">$29.30</span>
+                          <span className="font-medium">
+                            {formData.approximatedBudget 
+                              ? `$${(formData.approximatedBudget * 0.029 + 0.30).toFixed(2)}`
+                              : "$29.30"
+                            }
+                          </span>
                         </div>
                         <div className="border-t border-blue-200 dark:border-blue-700 pt-1 mt-2">
                           <div className="flex justify-between font-medium">
                             <span>Total Platform Fees:</span>
-                            <span>$79.30</span>
+                            <span>
+                              {formData.approximatedBudget 
+                                ? `$${(formData.approximatedBudget * 0.079 + 0.30).toFixed(2)}`
+                                : "$79.30"
+                              }
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -853,7 +900,7 @@ export const JobPostingForm = ({ onClose }: { onClose: () => void }) => {
                       </div>
 
                       <div>
-                        <h4 className="font-medium mb-2">Bidding Structure</h4>
+                        <h4 className="font-medium mb-2">Bidding Structure & Budget</h4>
                         <p className="text-muted-foreground flex items-center gap-1">
                           <DollarSign size={14} />
                           {formData.paymentType === "fixed" 
@@ -861,6 +908,11 @@ export const JobPostingForm = ({ onClose }: { onClose: () => void }) => {
                             : "Providers bid with hourly rates"
                           }
                         </p>
+                        {formData.approximatedBudget && (
+                          <p className="text-xs text-muted-foreground mt-1">
+                            Approximated budget: ${formData.approximatedBudget.toLocaleString()}
+                          </p>
+                        )}
                       </div>
                     </div>
 
