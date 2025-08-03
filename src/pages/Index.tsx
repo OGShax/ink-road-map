@@ -1,7 +1,7 @@
-import { TruckTracker } from '@/components/TruckTracker';
+import { NorwegianTruckTracker } from '@/components/NorwegianTruckTracker';
 
 const Index = () => {
-  return <TruckTracker />;
+  return <NorwegianTruckTracker />;
 };
 
 export default Index;
