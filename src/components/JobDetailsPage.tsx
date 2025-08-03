@@ -258,6 +258,21 @@ export const JobDetailsPage = ({ jobId, onBack }: { jobId: string; onBack: () =>
                 <p className="text-2xl font-bold text-primary">{mockBids.length}</p>
               </div>
             </div>
+            
+            {/* Enhanced Place Bid Button */}
+            <div className="flex justify-center mt-6 pt-4 border-t border-orange-500/20">
+              <Button 
+                onClick={() => setShowBidForm(true)} 
+                size="lg"
+                className="gradient-primary hover:scale-105 transform transition-all duration-300 shadow-lg hover:shadow-xl animate-pulse hover:animate-none px-8 py-3 text-lg font-semibold relative overflow-hidden group"
+              >
+                <span className="relative z-10 flex items-center gap-2">
+                  <DollarSign size={20} className="animate-bounce" />
+                  PLACE BID NOW
+                </span>
+                <div className="absolute inset-0 bg-gradient-to-r from-primary to-secondary opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              </Button>
+            </div>
           </CardContent>
         </Card>
 
