@@ -7,8 +7,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CreateTicketDialog } from "./support/CreateTicketDialog";
 import { TicketDetailDialog } from "./support/TicketDetailDialog";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, MessageSquare, Clock, CheckCircle, AlertCircle } from "lucide-react";
+import { Plus, MessageSquare, Clock, CheckCircle, AlertCircle, ArrowLeft } from "lucide-react";
 import { format } from "date-fns";
+import { useNavigate } from "react-router-dom";
 
 interface Ticket {
   id: string;
@@ -28,6 +29,7 @@ export function CustomerSupport() {
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchTickets();
@@ -131,9 +133,20 @@ export function CustomerSupport() {
   return (
     <div className="container mx-auto p-6 max-w-6xl">
       <div className="flex justify-between items-center mb-6">
-        <div>
-          <h1 className="text-3xl font-bold">Customer Support</h1>
-          <p className="text-muted-foreground">Manage your support tickets and get help</p>
+        <div className="flex items-center gap-4">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={() => navigate(-1)}
+            className="flex items-center gap-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back
+          </Button>
+          <div>
+            <h1 className="text-3xl font-bold">Customer Support</h1>
+            <p className="text-muted-foreground">Manage your support tickets and get help</p>
+          </div>
         </div>
         <Button onClick={() => setCreateDialogOpen(true)} className="flex items-center gap-2">
           <Plus className="h-4 w-4" />
