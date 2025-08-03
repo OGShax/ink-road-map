@@ -338,39 +338,95 @@ export const JobBoard = () => {
           </Card>
         </div>
 
-        {/* Jobs in My Area Section */}
+        {/* Compact Search and Filters */}
         <Card className="mb-6 shadow-md bg-gradient-to-r from-primary/5 to-accent/5">
           <CardContent className="pt-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold flex items-center gap-2">
-                <MapPin size={20} className="text-primary" />
-                Jobs in My Area
-              </h3>
-              <Button variant="outline" size="sm" onClick={() => setShowTips(!showTips)}>
-                <HelpCircle size={16} className="mr-2" />
-                How to use
-              </Button>
-            </div>
             <div className="space-y-4">
-              <div className="flex items-center gap-4">
-                <span className="text-sm font-medium min-w-fit">Search radius:</span>
-                <div className="flex-1 max-w-md">
-                  <Slider
-                    value={kmRange}
-                    onValueChange={setKmRange}
-                    max={200}
-                    min={5}
-                    step={5}
-                    className="w-full"
-                  />
-                </div>
-                <Badge variant="secondary" className="min-w-fit">
-                  {kmRange[0]} km
-                </Badge>
+              {/* Search Bar */}
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={20} />
+                <Input
+                  placeholder="Search jobs by title, description, or skills..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10 h-11 text-base"
+                />
               </div>
-              <p className="text-sm text-muted-foreground">
-                Showing jobs within {kmRange[0]}km of your location. Enable location services for more accurate results.
-              </p>
+
+              {/* Compact Filter Row */}
+              <div className="flex flex-wrap gap-3">
+                <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                  <SelectTrigger className="w-auto min-w-[140px] h-9 bg-background">
+                    <SelectValue placeholder="Category" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-background border shadow-lg z-50">
+                    <SelectItem value="all">All Categories</SelectItem>
+                    {categories.map((category) => (
+                      <SelectItem key={category.value} value={category.value}>
+                        <div className="flex items-center gap-2">
+                          <category.icon size={14} className={category.color} />
+                          {category.label}
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                <Select value={locationFilter} onValueChange={setLocationFilter}>
+                  <SelectTrigger className="w-auto min-w-[140px] h-9 bg-background">
+                    <SelectValue placeholder="Location" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-background border shadow-lg z-50">
+                    <SelectItem value="all">All Locations</SelectItem>
+                    {popularLocations.map((location) => (
+                      <SelectItem key={location} value={location}>
+                        <div className="flex items-center gap-2">
+                          <MapPin size={14} className="text-muted-foreground" />
+                          {location}
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                  <SelectTrigger className="w-auto min-w-[120px] h-9 bg-background">
+                    <SelectValue placeholder="Status" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-background border shadow-lg z-50">
+                    <SelectItem value="all">All Status</SelectItem>
+                    <SelectItem value="open">Open</SelectItem>
+                    <SelectItem value="in_progress">In Progress</SelectItem>
+                    <SelectItem value="completed">Completed</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                {/* Compact Distance Filter */}
+                <div className="flex items-center gap-2 bg-background border rounded-md px-3 py-1">
+                  <MapPin size={14} className="text-muted-foreground" />
+                  <span className="text-sm text-muted-foreground">Within:</span>
+                  <input 
+                    type="range" 
+                    min="5" 
+                    max="200" 
+                    step="5" 
+                    value={kmRange[0]} 
+                    onChange={(e) => setKmRange([parseInt(e.target.value)])}
+                    className="w-16 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                  />
+                  <span className="text-sm font-medium min-w-[35px]">{kmRange[0]}km</span>
+                </div>
+
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={clearAllFilters}
+                  className="h-9 flex items-center gap-2 hover:bg-destructive hover:text-destructive-foreground transition-colors"
+                >
+                  <X size={14} />
+                  Clear
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -436,126 +492,65 @@ export const JobBoard = () => {
           </Card>
         )}
 
-        {/* Collapsible Category Filters */}
+        {/* Compact Category Filters */}
         <Card className="mb-6 shadow-md">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold flex items-center gap-2">
                 <Filter size={20} />
-                Browse by Category
+                Quick Categories
               </h3>
             </div>
             
-            <Collapsible open={showAllCategories} onOpenChange={setShowAllCategories}>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-                {categories.slice(0, showAllCategories ? categories.length : 4).map((category) => (
+            <div className="flex flex-wrap gap-2">
+              <Button
+                variant={categoryFilter === "all" ? "default" : "outline"}
+                onClick={() => setCategoryFilter("all")}
+                size="sm"
+                className="h-8 text-xs"
+              >
+                All
+              </Button>
+              {categories.slice(0, 6).map((category) => (
+                <Button
+                  key={category.value}
+                  variant={categoryFilter === category.value ? "default" : "outline"}
+                  onClick={() => setCategoryFilter(category.value)}
+                  size="sm"
+                  className="h-8 text-xs flex items-center gap-1"
+                >
+                  <category.icon size={14} className={category.color} />
+                  {category.label}
+                </Button>
+              ))}
+              {categories.length > 6 && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowAllCategories(!showAllCategories)}
+                  className="h-8 text-xs text-muted-foreground"
+                >
+                  {showAllCategories ? "Less" : `+${categories.length - 6} more`}
+                </Button>
+              )}
+            </div>
+            
+            {showAllCategories && (
+              <div className="flex flex-wrap gap-2 mt-3 pt-3 border-t">
+                {categories.slice(6).map((category) => (
                   <Button
                     key={category.value}
                     variant={categoryFilter === category.value ? "default" : "outline"}
                     onClick={() => setCategoryFilter(category.value)}
-                    className="flex items-center gap-2 h-auto py-3 px-4 justify-start hover:scale-105 transition-all"
+                    size="sm"
+                    className="h-8 text-xs flex items-center gap-1"
                   >
-                    <category.icon size={18} className={category.color} />
-                    <span className="text-xs font-medium">{category.label}</span>
+                    <category.icon size={14} className={category.color} />
+                    {category.label}
                   </Button>
                 ))}
               </div>
-              
-              {categories.length > 4 && (
-                <CollapsibleTrigger asChild>
-                  <Button variant="ghost" className="w-full mt-3 flex items-center gap-2 text-muted-foreground hover:text-foreground">
-                    {showAllCategories ? (
-                      <>
-                        <ChevronUp size={16} />
-                        Show Less Categories
-                      </>
-                    ) : (
-                      <>
-                        <ChevronDown size={16} />
-                        Show More Categories ({categories.length - 4} more)
-                      </>
-                    )}
-                  </Button>
-                </CollapsibleTrigger>
-              )}
-            </Collapsible>
-          </CardContent>
-        </Card>
-
-        {/* Search and Advanced Filters */}
-        <Card className="mb-8 shadow-md">
-          <CardContent className="pt-6">
-            <div className="space-y-4">
-              {/* Search Bar */}
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={20} />
-                <Input
-                  placeholder="Search jobs by title, description, or skills..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 h-12 text-base"
-                />
-              </div>
-
-              {/* Filter Row */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                  <SelectTrigger className="h-12 bg-background">
-                    <SelectValue placeholder="All Categories" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-background border shadow-lg z-50">
-                    <SelectItem value="all">All Categories</SelectItem>
-                    {categories.map((category) => (
-                      <SelectItem key={category.value} value={category.value}>
-                        <div className="flex items-center gap-2">
-                          <category.icon size={16} className={category.color} />
-                          {category.label}
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-
-                <Select value={locationFilter} onValueChange={setLocationFilter}>
-                  <SelectTrigger className="h-12 bg-background">
-                    <SelectValue placeholder="All Locations" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-background border shadow-lg z-50">
-                    <SelectItem value="all">All Locations</SelectItem>
-                    {popularLocations.map((location) => (
-                      <SelectItem key={location} value={location}>
-                        <div className="flex items-center gap-2">
-                          <MapPin size={16} className="text-muted-foreground" />
-                          {location}
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-
-                <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger className="h-12 bg-background">
-                    <SelectValue placeholder="All Status" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-background border shadow-lg z-50">
-                    <SelectItem value="all">All Status</SelectItem>
-                    <SelectItem value="open">Open</SelectItem>
-                    <SelectItem value="in_progress">In Progress</SelectItem>
-                    <SelectItem value="completed">Completed</SelectItem>
-                    <SelectItem value="cancelled">Cancelled</SelectItem>
-                  </SelectContent>
-                </Select>
-
-                <Button 
-                  variant="outline" 
-                  onClick={clearAllFilters}
-                  className="h-12 flex items-center gap-2 hover:bg-destructive hover:text-destructive-foreground transition-colors"
-                >
-                  <X size={16} />
-                  Clear Filters
-                </Button>
-              </div>
-            </div>
+            )}
           </CardContent>
         </Card>
 
@@ -564,26 +559,26 @@ export const JobBoard = () => {
           <div className="flex flex-wrap gap-2 mb-6">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Filter size={16} />
-              <span>Active filters:</span>
+              <span>Active:</span>
             </div>
             {searchTerm && (
               <Badge variant="secondary" className="cursor-pointer hover:bg-destructive hover:text-destructive-foreground transition-colors" onClick={() => setSearchTerm("")}>
-                Search: "{searchTerm}" <X size={12} className="ml-1" />
+                "{searchTerm}" <X size={12} className="ml-1" />
               </Badge>
             )}
             {categoryFilter !== "all" && (
               <Badge variant="secondary" className="cursor-pointer hover:bg-destructive hover:text-destructive-foreground transition-colors" onClick={() => setCategoryFilter("all")}>
-                Category: {categoryFilter} <X size={12} className="ml-1" />
+                {categoryFilter} <X size={12} className="ml-1" />
               </Badge>
             )}
             {locationFilter !== "all" && (
               <Badge variant="secondary" className="cursor-pointer hover:bg-destructive hover:text-destructive-foreground transition-colors" onClick={() => setLocationFilter("all")}>
-                Location: {locationFilter} <X size={12} className="ml-1" />
+                {locationFilter} <X size={12} className="ml-1" />
               </Badge>
             )}
             {statusFilter !== "all" && (
               <Badge variant="secondary" className="cursor-pointer hover:bg-destructive hover:text-destructive-foreground transition-colors" onClick={() => setStatusFilter("all")}>
-                Status: {statusFilter} <X size={12} className="ml-1" />
+                {statusFilter} <X size={12} className="ml-1" />
               </Badge>
             )}
           </div>

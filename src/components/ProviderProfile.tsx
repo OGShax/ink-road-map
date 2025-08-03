@@ -24,6 +24,7 @@ import {
   ExternalLink,
   BookOpen
 } from "lucide-react";
+import { VerifiedBadge } from "./VerifiedBadge";
 
 const mockProvider = {
   id: "p1",
@@ -226,8 +227,8 @@ export const ProviderProfile = () => {
                   <AvatarFallback>{mockProvider.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
                 </Avatar>
                 {mockProvider.verified && (
-                  <div className="absolute -bottom-2 -right-2 bg-blue-500 text-white rounded-full p-2">
-                    <Verified size={16} fill="currentColor" />
+                  <div className="absolute -bottom-2 -right-2">
+                    <VerifiedBadge size="sm" variant="glow" showText={false} />
                   </div>
                 )}
               </div>
