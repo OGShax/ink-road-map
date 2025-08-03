@@ -10,7 +10,7 @@ import { Switch } from "@/components/ui/switch";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { MapPin, Clock, DollarSign, User, MessageSquare, Star, Calendar, AlertCircle, Timer, Camera, Send, Share2, Copy, Facebook, Twitter, Linkedin, CheckCircle, TrendingUp, MessageCircle } from "lucide-react";
+import { MapPin, Clock, DollarSign, User, MessageSquare, Star, Calendar, AlertCircle, Timer, Camera, Send, Share2, Copy, Facebook, Twitter, Linkedin, CheckCircle, TrendingUp, MessageCircle, Lock } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { VerifiedBadge } from "./VerifiedBadge";
@@ -476,16 +476,22 @@ export const JobDetailsPage = ({ jobId, onBack }: { jobId: string; onBack: () =>
               <Star size={16} className={isFollowing ? "fill-current" : ""} />
               {isFollowing ? "Following" : "Follow"}
             </Button>
-            {!mockJob.winnerBid && (
+            {mockJob.status === 'open' && !mockJob.winnerBid && (
               <Button onClick={() => setShowBidForm(true)} className="gradient-primary">
                 Place Bid
               </Button>
+            )}
+            {(mockJob.status === 'in_progress' || mockJob.status === 'completed') && (
+              <div className="flex items-center gap-2 px-4 py-2 bg-muted rounded-lg">
+                <Lock size={16} className="text-muted-foreground" />
+                <span className="text-sm font-medium text-muted-foreground">Bidding Closed</span>
+              </div>
             )}
           </div>
         </div>
 
         {/* Conditional Countdown Timer or Winner Information */}
-        {!mockJob.winnerBid ? (
+        {mockJob.status === 'open' && !mockJob.winnerBid ? (
           <Card className="mb-6 border-orange-500/20 bg-gradient-to-r from-orange-500/10 to-red-500/10">
             <CardContent className="pt-6">
               <div className="flex items-center justify-center gap-4">
@@ -516,7 +522,7 @@ export const JobDetailsPage = ({ jobId, onBack }: { jobId: string; onBack: () =>
               </div>
             </CardContent>
           </Card>
-        ) : mockJob.winnerBid && (
+        ) : (mockJob.status === 'in_progress' || mockJob.status === 'completed') && mockJob.winnerBid && (
           <Card className="mb-6 border-green-500/20 bg-gradient-to-r from-green-500/10 to-blue-500/10">
             <CardContent className="pt-6">
               <div className="flex items-center justify-center gap-6 mb-6">
@@ -829,7 +835,7 @@ export const JobDetailsPage = ({ jobId, onBack }: { jobId: string; onBack: () =>
                         <MessageCircle size={14} />
                         Message
                       </Button>
-                      {!mockJob.winnerBid && (
+                      {mockJob.status === 'open' && !mockJob.winnerBid && (
                         <Button size="sm" className="bg-green-600 hover:bg-green-700 flex items-center gap-1">
                           <CheckCircle size={14} />
                           Accept Bid
@@ -841,7 +847,7 @@ export const JobDetailsPage = ({ jobId, onBack }: { jobId: string; onBack: () =>
               </Card>
             ))}
             
-            {!mockJob.winnerBid && (
+            {mockJob.status === 'open' && !mockJob.winnerBid && (
               <Card className="border-dashed border-2 border-primary/30 bg-primary/5">
                 <CardContent className="pt-6 text-center">
                   <div className="flex flex-col items-center gap-3">
@@ -852,6 +858,20 @@ export const JobDetailsPage = ({ jobId, onBack }: { jobId: string; onBack: () =>
                       <Button onClick={() => setShowBidForm(true)} className="gradient-primary">
                         Place Your Bid
                       </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+            
+            {(mockJob.status === 'in_progress' || mockJob.status === 'completed') && (
+              <Card className="border-muted bg-muted/20">
+                <CardContent className="pt-6 text-center">
+                  <div className="flex flex-col items-center gap-3">
+                    <Lock className="w-8 h-8 text-muted-foreground" />
+                    <div>
+                      <h4 className="font-semibold mb-1 text-muted-foreground">Bidding Closed</h4>
+                      <p className="text-sm text-muted-foreground">This project is no longer accepting bids</p>
                     </div>
                   </div>
                 </CardContent>
