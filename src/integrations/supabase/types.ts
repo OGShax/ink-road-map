@@ -14,7 +14,319 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      bids: {
+        Row: {
+          accepted_at: string | null
+          amount: number
+          bidder_id: string
+          custom_deposit_percentage: number | null
+          deposit_amount: number | null
+          deposit_option: Database["public"]["Enums"]["deposit_option"]
+          estimated_hours: number | null
+          hourly_rate: number | null
+          id: string
+          job_id: string
+          proposal: string
+          status: Database["public"]["Enums"]["bid_status"]
+          submitted_at: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          amount: number
+          bidder_id: string
+          custom_deposit_percentage?: number | null
+          deposit_amount?: number | null
+          deposit_option?: Database["public"]["Enums"]["deposit_option"]
+          estimated_hours?: number | null
+          hourly_rate?: number | null
+          id?: string
+          job_id: string
+          proposal: string
+          status?: Database["public"]["Enums"]["bid_status"]
+          submitted_at?: string
+        }
+        Update: {
+          accepted_at?: string | null
+          amount?: number
+          bidder_id?: string
+          custom_deposit_percentage?: number | null
+          deposit_amount?: number | null
+          deposit_option?: Database["public"]["Enums"]["deposit_option"]
+          estimated_hours?: number | null
+          hourly_rate?: number | null
+          id?: string
+          job_id?: string
+          proposal?: string
+          status?: Database["public"]["Enums"]["bid_status"]
+          submitted_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bids_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      job_followers: {
+        Row: {
+          followed_at: string
+          id: string
+          job_id: string
+          user_id: string
+        }
+        Insert: {
+          followed_at?: string
+          id?: string
+          job_id: string
+          user_id: string
+        }
+        Update: {
+          followed_at?: string
+          id?: string
+          job_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_followers_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      job_qa: {
+        Row: {
+          answer: string | null
+          created_at: string
+          id: string
+          job_id: string
+          parent_id: string | null
+          question: string | null
+          user_id: string
+        }
+        Insert: {
+          answer?: string | null
+          created_at?: string
+          id?: string
+          job_id: string
+          parent_id?: string | null
+          question?: string | null
+          user_id: string
+        }
+        Update: {
+          answer?: string | null
+          created_at?: string
+          id?: string
+          job_id?: string
+          parent_id?: string | null
+          question?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_qa_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "job_qa_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "job_qa"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      jobs: {
+        Row: {
+          address: string | null
+          approximate_hours: number | null
+          bid_includes_mva: boolean | null
+          bidding_end_date: string | null
+          bidding_start_date: string | null
+          budget_max: number | null
+          category: string
+          created_at: string
+          description: string
+          fixed_price: number | null
+          guidelines: string | null
+          hourly_rate: number | null
+          id: string
+          image_urls: string[] | null
+          latitude: number | null
+          longitude: number | null
+          materials_provided: boolean | null
+          mva_enabled: boolean | null
+          payment_type: Database["public"]["Enums"]["payment_type"]
+          project_end_date: string | null
+          project_start_date: string | null
+          status: Database["public"]["Enums"]["job_status"]
+          title: string
+          updated_at: string
+          urgency_level: Database["public"]["Enums"]["urgency_level"]
+          user_id: string
+        }
+        Insert: {
+          address?: string | null
+          approximate_hours?: number | null
+          bid_includes_mva?: boolean | null
+          bidding_end_date?: string | null
+          bidding_start_date?: string | null
+          budget_max?: number | null
+          category: string
+          created_at?: string
+          description: string
+          fixed_price?: number | null
+          guidelines?: string | null
+          hourly_rate?: number | null
+          id?: string
+          image_urls?: string[] | null
+          latitude?: number | null
+          longitude?: number | null
+          materials_provided?: boolean | null
+          mva_enabled?: boolean | null
+          payment_type?: Database["public"]["Enums"]["payment_type"]
+          project_end_date?: string | null
+          project_start_date?: string | null
+          status?: Database["public"]["Enums"]["job_status"]
+          title: string
+          updated_at?: string
+          urgency_level?: Database["public"]["Enums"]["urgency_level"]
+          user_id: string
+        }
+        Update: {
+          address?: string | null
+          approximate_hours?: number | null
+          bid_includes_mva?: boolean | null
+          bidding_end_date?: string | null
+          bidding_start_date?: string | null
+          budget_max?: number | null
+          category?: string
+          created_at?: string
+          description?: string
+          fixed_price?: number | null
+          guidelines?: string | null
+          hourly_rate?: number | null
+          id?: string
+          image_urls?: string[] | null
+          latitude?: number | null
+          longitude?: number | null
+          materials_provided?: boolean | null
+          mva_enabled?: boolean | null
+          payment_type?: Database["public"]["Enums"]["payment_type"]
+          project_end_date?: string | null
+          project_start_date?: string | null
+          status?: Database["public"]["Enums"]["job_status"]
+          title?: string
+          updated_at?: string
+          urgency_level?: Database["public"]["Enums"]["urgency_level"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      payments: {
+        Row: {
+          amount: number
+          bid_id: string | null
+          created_at: string
+          id: string
+          job_id: string
+          payee_id: string
+          payer_id: string
+          payment_type: string
+          status: string
+          stripe_payment_intent_id: string | null
+        }
+        Insert: {
+          amount: number
+          bid_id?: string | null
+          created_at?: string
+          id?: string
+          job_id: string
+          payee_id: string
+          payer_id: string
+          payment_type: string
+          status?: string
+          stripe_payment_intent_id?: string | null
+        }
+        Update: {
+          amount?: number
+          bid_id?: string | null
+          created_at?: string
+          id?: string
+          job_id?: string
+          payee_id?: string
+          payer_id?: string
+          payment_type?: string
+          status?: string
+          stripe_payment_intent_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_bid_id_fkey"
+            columns: ["bid_id"]
+            isOneToOne: false
+            referencedRelation: "bids"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string
+          full_name: string | null
+          id: string
+          is_service_provider: boolean | null
+          phone: string | null
+          rating: number | null
+          total_jobs_completed: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          is_service_provider?: boolean | null
+          phone?: string | null
+          rating?: number | null
+          total_jobs_completed?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          is_service_provider?: boolean | null
+          phone?: string | null
+          rating?: number | null
+          total_jobs_completed?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +335,17 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      bid_status: "pending" | "accepted" | "rejected" | "withdrawn"
+      deposit_option: "25_percent" | "custom" | "full_payment"
+      job_status:
+        | "draft"
+        | "active"
+        | "bidding_closed"
+        | "in_progress"
+        | "completed"
+        | "cancelled"
+      payment_type: "fixed" | "hourly"
+      urgency_level: "asap" | "within_week" | "flexible"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +472,19 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      bid_status: ["pending", "accepted", "rejected", "withdrawn"],
+      deposit_option: ["25_percent", "custom", "full_payment"],
+      job_status: [
+        "draft",
+        "active",
+        "bidding_closed",
+        "in_progress",
+        "completed",
+        "cancelled",
+      ],
+      payment_type: ["fixed", "hourly"],
+      urgency_level: ["asap", "within_week", "flexible"],
+    },
   },
 } as const
