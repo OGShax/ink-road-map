@@ -9,6 +9,7 @@ import { ProviderProfile } from "./components/ProviderProfile";
 import { StaffProfile } from "./components/StaffProfile";
 import { StudyCenter } from "./components/StudyCenter";
 import { MonetizationDashboard } from "./components/MonetizationDashboard";
+import Support from "./pages/Support";
 
 const queryClient = new QueryClient();
 
@@ -26,6 +27,7 @@ const App = () => (
           <Route path="/study-center" element={<StudyCenter />} />
           <Route path="/pro-subscription" element={<MonetizationDashboard />} />
           <Route path="/become-provider" element={<MonetizationDashboard />} />
+          <Route path="/support" element={<Support />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
