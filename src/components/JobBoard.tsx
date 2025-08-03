@@ -19,11 +19,11 @@ import creativeProcess from "@/assets/creative-process.jpg";
 const mockJobs = [
   {
     id: "1",
-    title: "Modern Web Application Development",
-    description: "Looking for an experienced developer to create a responsive web application with React and Node.js. The project includes user authentication, payment integration, and real-time features.",
-    budget: 5000,
+    title: "Professional Hair Styling & Color Treatment",
+    description: "Experienced hair stylist needed for wedding preparation. Includes bridal party of 6 people. Must have experience with formal updos, hair extensions, and color touch-ups.",
+    budget: 850,
     location: "New York, NY",
-    category: "Web Development",
+    category: "Hair Studio",
     deadline: "2024-02-15",
     postedAt: "2024-01-15",
     status: "open",
@@ -31,11 +31,11 @@ const mockJobs = [
   },
   {
     id: "2",
-    title: "Mobile App UI/UX Design",
-    description: "Need a creative designer to design a modern mobile app interface for a fitness tracking application. Must include wireframes, prototypes, and final designs.",
-    budget: 3500,
+    title: "Custom Tattoo Design & Application",
+    description: "Looking for skilled tattoo artist to create and apply a custom sleeve design. Traditional Japanese style preferred. Must provide portfolio of similar work.",
+    budget: 1200,
     location: "San Francisco, CA",
-    category: "Design",
+    category: "Tattoo Studio",
     deadline: "2024-02-20",
     postedAt: "2024-01-18",
     status: "in_progress",
@@ -43,11 +43,11 @@ const mockJobs = [
   },
   {
     id: "3",
-    title: "E-commerce Platform Development",
-    description: "Build a complete e-commerce solution with inventory management, payment processing, and admin dashboard. Must support multiple vendors and mobile responsive.",
-    budget: 8500,
+    title: "Deep Tissue Massage Therapy",
+    description: "Need licensed massage therapist for weekly sessions. Must specialize in deep tissue and sports massage. Location flexible - can travel to client.",
+    budget: 300,
     location: "Los Angeles, CA",
-    category: "Web Development",
+    category: "Massage Therapy",
     deadline: "2024-03-01",
     postedAt: "2024-01-20",
     status: "open",
@@ -55,11 +55,11 @@ const mockJobs = [
   },
   {
     id: "4",
-    title: "Brand Identity & Logo Design",
-    description: "Create a complete brand identity package for a tech startup including logo, color palette, typography, and brand guidelines.",
-    budget: 2500,
-    location: "Remote",
-    category: "Design",
+    title: "Acrylic Nail Art & Manicure",
+    description: "Professional nail technician needed for special event preparation. Includes nail art, French manicure, and pedicure services for 8 people.",
+    budget: 480,
+    location: "Miami, FL",
+    category: "Nail Tech",
     deadline: "2024-02-10",
     postedAt: "2024-01-12",
     status: "completed",
@@ -67,11 +67,11 @@ const mockJobs = [
   },
   {
     id: "5",
-    title: "Data Analytics Dashboard",
-    description: "Develop a comprehensive data analytics dashboard with real-time visualizations, KPI tracking, and automated reporting features.",
-    budget: 6200,
+    title: "Classic Barber Services & Beard Styling",
+    description: "Traditional barber needed for men's grooming service. Hot towel shaves, beard trimming, and classic cuts. Must have traditional barber tools and experience.",
+    budget: 180,
     location: "Chicago, IL",
-    category: "Data Science",
+    category: "Barber Shop",
     deadline: "2024-02-25",
     postedAt: "2024-01-22",
     status: "open",
@@ -79,11 +79,11 @@ const mockJobs = [
   },
   {
     id: "6",
-    title: "Marketing Campaign Photography",
-    description: "Professional photographer needed for a 2-day marketing campaign shoot. Experience with product photography and lifestyle shots required.",
-    budget: 1800,
-    location: "Miami, FL",
-    category: "Photography",
+    title: "Kitchen Renovation & Tiling",
+    description: "Experienced construction worker needed for complete kitchen renovation. Includes demolition, tiling, plumbing assistance, and installation work.",
+    budget: 3500,
+    location: "Seattle, WA",
+    category: "Construction",
     deadline: "2024-02-08",
     postedAt: "2024-01-25",
     status: "open",
@@ -91,13 +91,62 @@ const mockJobs = [
   }
 ];
 
+const popularProviders = [
+  {
+    id: "p1",
+    name: "Sophia's Hair Studio",
+    category: "Hair Studio",
+    rating: 4.9,
+    reviewCount: 127,
+    specialties: ["Bridal", "Color", "Extensions"],
+    location: "New York, NY",
+    image: "https://images.unsplash.com/photo-1492106087820-71f1a00d2b11?w=400&h=400&fit=crop",
+    verified: true
+  },
+  {
+    id: "p2", 
+    name: "Ink & Steel Tattoos",
+    category: "Tattoo Studio",
+    rating: 4.8,
+    reviewCount: 89,
+    specialties: ["Traditional", "Realism", "Custom"],
+    location: "San Francisco, CA",
+    image: "https://images.unsplash.com/photo-1568515387631-8b650bbcdb90?w=400&h=400&fit=crop",
+    verified: true
+  },
+  {
+    id: "p3",
+    name: "Zen Massage Therapy",
+    category: "Massage Therapy", 
+    rating: 5.0,
+    reviewCount: 156,
+    specialties: ["Deep Tissue", "Sports", "Relaxation"],
+    location: "Los Angeles, CA",
+    image: "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=400&h=400&fit=crop",
+    verified: true
+  },
+  {
+    id: "p4",
+    name: "Elite Nail Artistry",
+    category: "Nail Tech",
+    rating: 4.7,
+    reviewCount: 203,
+    specialties: ["Nail Art", "Acrylics", "Gel"],
+    location: "Miami, FL",
+    image: "https://images.unsplash.com/photo-1604654894610-df63bc536371?w=400&h=400&fit=crop",
+    verified: true
+  }
+];
+
 const categories = [
-  { value: "Web Development", label: "Web Development", icon: Code, color: "text-blue-500" },
-  { value: "Design", label: "Design", icon: Palette, color: "text-purple-500" },
-  { value: "Data Science", label: "Data Science", icon: BarChart3, color: "text-green-500" },
-  { value: "Photography", label: "Photography", icon: Camera, color: "text-orange-500" },
-  { value: "Marketing", label: "Marketing", icon: TrendingUp, color: "text-pink-500" },
-  { value: "Business", label: "Business", icon: Briefcase, color: "text-indigo-500" }
+  { value: "Hair Studio", label: "Hair Studio", icon: Users, color: "text-pink-500" },
+  { value: "Tattoo Studio", label: "Tattoo Studio", icon: Palette, color: "text-purple-500" },
+  { value: "Massage Therapy", label: "Massage Therapy", icon: Users, color: "text-green-500" },
+  { value: "Nail Tech", label: "Nail Tech", icon: Camera, color: "text-orange-500" },
+  { value: "Barber Shop", label: "Barber Shop", icon: Users, color: "text-blue-500" },
+  { value: "Construction", label: "Construction", icon: Briefcase, color: "text-indigo-500" },
+  { value: "Beauty Services", label: "Beauty Services", icon: Palette, color: "text-rose-500" },
+  { value: "Home Services", label: "Home Services", icon: BarChart3, color: "text-teal-500" }
 ];
 
 const popularLocations = [
@@ -523,6 +572,61 @@ export const JobBoard = () => {
           </div>
         )}
 
+        {/* Popular Providers Section */}
+        <Card className="mb-8 shadow-md">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-semibold flex items-center gap-2">
+                <Star size={20} className="text-primary" />
+                Popular Providers in Your Area
+              </h3>
+              <Button variant="outline" size="sm">View All</Button>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {popularProviders.map((provider) => (
+                <Card key={provider.id} className="group hover:shadow-lg transition-all duration-300 hover:scale-105 cursor-pointer">
+                  <CardContent className="p-4">
+                    <div className="flex flex-col items-center text-center space-y-3">
+                      <div className="relative">
+                        <img 
+                          src={provider.image} 
+                          alt={provider.name}
+                          className="w-16 h-16 rounded-full object-cover ring-2 ring-primary/20"
+                        />
+                        {provider.verified && (
+                          <div className="absolute -bottom-1 -right-1 bg-green-500 text-white rounded-full p-1">
+                            <Star size={12} fill="currentColor" />
+                          </div>
+                        )}
+                      </div>
+                      <div className="space-y-1">
+                        <h4 className="font-semibold text-sm">{provider.name}</h4>
+                        <p className="text-xs text-muted-foreground">{provider.category}</p>
+                        <div className="flex items-center gap-1 justify-center">
+                          <Star size={12} className="text-yellow-500 fill-current" />
+                          <span className="text-xs font-medium">{provider.rating}</span>
+                          <span className="text-xs text-muted-foreground">({provider.reviewCount})</span>
+                        </div>
+                      </div>
+                      <div className="flex flex-wrap gap-1 justify-center">
+                        {provider.specialties.slice(0, 2).map((specialty) => (
+                          <Badge key={specialty} variant="secondary" className="text-xs px-2 py-0">
+                            {specialty}
+                          </Badge>
+                        ))}
+                      </div>
+                      <p className="text-xs text-muted-foreground flex items-center gap-1">
+                        <MapPin size={10} />
+                        {provider.location}
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Results Header */}
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-semibold">
@@ -571,6 +675,50 @@ export const JobBoard = () => {
             </CardContent>
           </Card>
         )}
+
+        {/* Custom Job Request Section */}
+        <Card className="mt-12 mb-8 bg-gradient-to-r from-primary/10 via-accent/10 to-primary/10 border-primary/20">
+          <CardContent className="pt-8 pb-8 text-center">
+            <div className="max-w-2xl mx-auto space-y-4">
+              <div className="flex justify-center mb-4">
+                <div className="p-3 bg-primary/20 rounded-full">
+                  <Search size={32} className="text-primary" />
+                </div>
+              </div>
+              <h3 className="text-2xl font-bold">Can't find your provider or service?</h3>
+              <p className="text-muted-foreground text-lg">
+                Don't worry! Create a custom job request and let qualified providers find you instead.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center items-center mt-6">
+                <Button 
+                  onClick={handlePostJob}
+                  size="lg"
+                  className="bg-gradient-to-r from-primary to-accent hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl px-8 py-3"
+                >
+                  <Plus size={20} className="mr-2" />
+                  Create Custom Job Request
+                </Button>
+                <div className="text-sm text-muted-foreground">
+                  ✨ Get responses in 24 hours
+                </div>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8 text-sm">
+                <div className="flex items-center justify-center gap-2">
+                  <div className="w-2 h-2 bg-green-500 rounded-full" />
+                  <span>Free to post</span>
+                </div>
+                <div className="flex items-center justify-center gap-2">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full" />
+                  <span>Verified providers</span>
+                </div>
+                <div className="flex items-center justify-center gap-2">
+                  <div className="w-2 h-2 bg-purple-500 rounded-full" />
+                  <span>Secure payments</span>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
