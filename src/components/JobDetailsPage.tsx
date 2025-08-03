@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -9,7 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
-import { MapPin, Clock, DollarSign, User, MessageSquare, Star, Calendar, AlertCircle } from "lucide-react";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { MapPin, Clock, DollarSign, User, MessageSquare, Star, Calendar, AlertCircle, Timer, Camera, Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface Job {
@@ -57,19 +58,23 @@ interface QAItem {
 
 const mockJob: Job = {
   id: "1",
-  title: "Modern E-commerce Website Development",
-  description: "Looking for an experienced developer to create a responsive e-commerce website with React and Node.js. The project includes user authentication, payment integration, shopping cart functionality, admin dashboard, and inventory management system.",
-  category: "Web Development",
-  address: "Remote",
+  title: "Interior House Painting - Living Room & Kitchen",
+  description: "Need professional painting services for my 1200 sq ft living room and kitchen. Walls are in good condition, just need a fresh coat of paint. I have specific color preferences and would like advice on paint selection. Looking for someone with experience in residential painting and attention to detail.",
+  category: "Home Improvement",
+  address: "Downtown Seattle, WA",
   paymentType: "fixed",
-  fixedPrice: 5000,
-  budgetMax: 6000,
+  fixedPrice: 2800,
+  budgetMax: 3200,
   urgencyLevel: "within_week",
   materialsProvided: false,
-  biddingEndDate: "2024-02-15T23:59:59Z",
+  biddingEndDate: "2025-08-10T18:00:00Z",
   status: "active",
-  imageUrls: [],
-  createdAt: "2024-01-15T10:00:00Z"
+  imageUrls: [
+    "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&h=600&fit=crop",
+    "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=600&fit=crop",
+    "https://images.unsplash.com/photo-1585821569331-f071db2abd8d?w=800&h=600&fit=crop"
+  ],
+  createdAt: "2025-08-01T10:00:00Z"
 };
 
 const mockBids: Bid[] = [
@@ -124,6 +129,7 @@ export const JobDetailsPage = ({ jobId, onBack }: { jobId: string; onBack: () =>
   const [isFollowing, setIsFollowing] = useState(false);
   const [showBidForm, setShowBidForm] = useState(false);
   const [newQuestion, setNewQuestion] = useState("");
+  const [timeLeft, setTimeLeft] = useState("");
   const [bidData, setBidData] = useState({
     amount: "",
     estimatedHours: "",
@@ -133,6 +139,34 @@ export const JobDetailsPage = ({ jobId, onBack }: { jobId: string; onBack: () =>
     proposal: ""
   });
   const { toast } = useToast();
+
+  // Countdown timer for bidding deadline
+  useEffect(() => {
+    const timer = setInterval(() => {
+      const now = new Date().getTime();
+      const deadline = new Date(mockJob.biddingEndDate).getTime();
+      const distance = deadline - now;
+
+      if (distance > 0) {
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        if (days > 0) {
+          setTimeLeft(`${days}d ${hours}h ${minutes}m`);
+        } else if (hours > 0) {
+          setTimeLeft(`${hours}h ${minutes}m ${seconds}s`);
+        } else {
+          setTimeLeft(`${minutes}m ${seconds}s`);
+        }
+      } else {
+        setTimeLeft("Bidding Closed");
+      }
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
 
   const handleFollow = () => {
     setIsFollowing(!isFollowing);
@@ -202,61 +236,123 @@ export const JobDetailsPage = ({ jobId, onBack }: { jobId: string; onBack: () =>
               <Star size={16} className={isFollowing ? "fill-current" : ""} />
               {isFollowing ? "Following" : "Follow"}
             </Button>
-            <Button onClick={() => setShowBidForm(true)}>
+            <Button onClick={() => setShowBidForm(true)} className="gradient-primary">
               Place Bid
             </Button>
           </div>
         </div>
 
-        {/* Job Info Card */}
-        <Card className="mb-6">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center gap-2">
-                Job Details
-                <Badge className={getUrgencyColor(mockJob.urgencyLevel)}>
-                  {mockJob.urgencyLevel.replace('_', ' ').toUpperCase()}
-                </Badge>
-              </CardTitle>
-              <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                <div className="flex items-center gap-1">
-                  <DollarSign size={16} />
-                  <span className="text-primary font-semibold">
-                    ${mockJob.fixedPrice?.toLocaleString()}
-                  </span>
-                  {mockJob.paymentType === 'fixed' ? ' Fixed' : ' /hour'}
-                </div>
-                <div className="flex items-center gap-1">
-                  <Clock size={16} />
-                  <span>Bidding ends {new Date(mockJob.biddingEndDate).toLocaleDateString()}</span>
-                </div>
+        {/* Countdown Timer */}
+        <Card className="mb-6 border-orange-500/20 bg-gradient-to-r from-orange-500/10 to-red-500/10">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-center gap-4">
+              <Timer className="text-orange-500" size={24} />
+              <div className="text-center">
+                <p className="text-sm text-muted-foreground">Bidding ends in</p>
+                <p className="text-2xl font-bold text-orange-500">{timeLeft}</p>
               </div>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <p className="text-foreground leading-relaxed">{mockJob.description}</p>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6 pt-6 border-t">
-              <div>
-                <p className="text-sm text-muted-foreground">Budget Range</p>
-                <p className="font-semibold">${mockJob.budgetMax?.toLocaleString()} max</p>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Materials</p>
-                <p className="font-semibold">
-                  {mockJob.materialsProvided ? 'Provided' : 'Not Provided'}
-                </p>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Bids Received</p>
-                <p className="font-semibold">{mockBids.length} bids</p>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Followers</p>
-                <p className="font-semibold">12 following</p>
+              <div className="text-center">
+                <p className="text-sm text-muted-foreground">Total Bids</p>
+                <p className="text-2xl font-bold text-primary">{mockBids.length}</p>
               </div>
             </div>
           </CardContent>
         </Card>
+
+        {/* Job Images & Details */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          {/* Images */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Camera size={20} />
+                Project Images
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {mockJob.imageUrls.length > 0 ? (
+                <div className="grid grid-cols-1 gap-4">
+                  <div className="grid grid-cols-2 gap-2">
+                    {mockJob.imageUrls.slice(0, 3).map((url, index) => (
+                      <AspectRatio key={index} ratio={index === 0 ? 16/12 : 16/9} className={index === 0 ? "col-span-2" : ""}>
+                        <img
+                          src={url}
+                          alt={`Project image ${index + 1}`}
+                          className="rounded-lg object-cover w-full h-full hover:scale-105 transition-transform cursor-pointer"
+                        />
+                      </AspectRatio>
+                    ))}
+                  </div>
+                  {mockJob.imageUrls.length > 3 && (
+                    <p className="text-sm text-muted-foreground text-center">
+                      +{mockJob.imageUrls.length - 3} more images
+                    </p>
+                  )}
+                </div>
+              ) : (
+                <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
+                  <div className="text-center text-muted-foreground">
+                    <Camera size={48} className="mx-auto mb-2 opacity-50" />
+                    <p>No images provided</p>
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Job Details */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle className="flex items-center gap-2">
+                  Job Details
+                  <Badge className={getUrgencyColor(mockJob.urgencyLevel)}>
+                    {mockJob.urgencyLevel.replace('_', ' ').toUpperCase()}
+                  </Badge>
+                </CardTitle>
+                <div className="text-right">
+                  <div className="flex items-center gap-1 justify-end">
+                    <DollarSign size={20} />
+                    <span className="text-2xl font-bold text-primary">
+                      ${mockJob.fixedPrice?.toLocaleString()}
+                    </span>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    {mockJob.paymentType === 'fixed' ? 'Fixed Price' : 'Per Hour'}
+                  </p>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <p className="text-foreground leading-relaxed mb-6">{mockJob.description}</p>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-4">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Budget Range</p>
+                    <p className="font-semibold">${mockJob.budgetMax?.toLocaleString()} max</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Materials</p>
+                    <p className="font-semibold">
+                      {mockJob.materialsProvided ? 'Provided' : 'Not Provided'}
+                    </p>
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Bids Received</p>
+                    <p className="font-semibold">{mockBids.length} bids</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Followers</p>
+                    <p className="font-semibold">12 following</p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
         {/* Tabs */}
         <div className="flex gap-1 mb-6">
@@ -290,27 +386,35 @@ export const JobDetailsPage = ({ jobId, onBack }: { jobId: string; onBack: () =>
               <CardTitle>Project Requirements</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
+              <div className="space-y-6">
                 <div>
-                  <h4 className="font-semibold mb-2">Key Features Required:</h4>
-                  <ul className="list-disc list-inside space-y-1 text-muted-foreground">
-                    <li>User authentication and authorization</li>
-                    <li>Shopping cart and checkout functionality</li>
-                    <li>Payment gateway integration (Stripe/PayPal)</li>
-                    <li>Admin dashboard for product management</li>
-                    <li>Inventory management system</li>
-                    <li>Mobile responsive design</li>
-                    <li>SEO optimization</li>
+                  <h4 className="font-semibold mb-3 text-lg">What needs to be done:</h4>
+                  <ul className="list-disc list-inside space-y-2 text-muted-foreground">
+                    <li>Paint living room (approx. 400 sq ft) - walls and ceiling</li>
+                    <li>Paint kitchen (approx. 300 sq ft) - walls only</li>
+                    <li>Prep work including light sanding and hole filling</li>
+                    <li>Remove switch plates and outlet covers</li>
+                    <li>Protect floors and furniture with drop cloths</li>
+                    <li>Clean up after job completion</li>
                   </ul>
                 </div>
                 <div>
-                  <h4 className="font-semibold mb-2">Technical Requirements:</h4>
-                  <ul className="list-disc list-inside space-y-1 text-muted-foreground">
-                    <li>React.js for frontend</li>
-                    <li>Node.js for backend</li>
-                    <li>PostgreSQL or MongoDB for database</li>
-                    <li>RESTful API design</li>
-                    <li>Modern CSS framework (Tailwind preferred)</li>
+                  <h4 className="font-semibold mb-3 text-lg">Paint Preferences:</h4>
+                  <ul className="list-disc list-inside space-y-2 text-muted-foreground">
+                    <li>Living room: Warm neutral color (beige/cream family)</li>
+                    <li>Kitchen: Light, fresh color (white or very light gray)</li>
+                    <li>High-quality paint preferred (Sherwin Williams or Benjamin Moore)</li>
+                    <li>Eggshell or satin finish for durability</li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="font-semibold mb-3 text-lg">Requirements:</h4>
+                  <ul className="list-disc list-inside space-y-2 text-muted-foreground">
+                    <li>Licensed and insured painter</li>
+                    <li>Minimum 3 years of residential painting experience</li>
+                    <li>References from recent customers</li>
+                    <li>Must provide own tools and equipment</li>
+                    <li>Available to start within 1-2 weeks</li>
                   </ul>
                 </div>
               </div>
@@ -392,6 +496,36 @@ export const JobDetailsPage = ({ jobId, onBack }: { jobId: string; onBack: () =>
               ))}
             </div>
 
+            {/* Quick Question Buttons */}
+            <Card className="mb-4">
+              <CardHeader>
+                <CardTitle className="text-lg">Quick Questions</CardTitle>
+                <p className="text-sm text-muted-foreground">Click any question to ask it quickly</p>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                  {[
+                    "What type of paint do you recommend?",
+                    "How long will this project take?",
+                    "Do you provide a warranty?",
+                    "Can you work around my schedule?",
+                    "Do you have references I can contact?",
+                    "What's included in the preparation work?"
+                  ].map((question, index) => (
+                    <Button
+                      key={index}
+                      variant="outline"
+                      size="sm"
+                      className="justify-start text-left h-auto p-3 hover:bg-primary/5"
+                      onClick={() => setNewQuestion(question)}
+                    >
+                      {question}
+                    </Button>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
             {/* Ask Question Form */}
             <Card>
               <CardHeader>
@@ -399,18 +533,32 @@ export const JobDetailsPage = ({ jobId, onBack }: { jobId: string; onBack: () =>
                   <MessageSquare size={20} />
                   Ask a Question
                 </CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  Get clarification before placing your bid
+                </p>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   <Textarea
-                    placeholder="Ask a question about this project..."
+                    placeholder="Ask a specific question about this painting project..."
                     value={newQuestion}
                     onChange={(e) => setNewQuestion(e.target.value)}
-                    rows={3}
+                    rows={4}
+                    className="resize-none"
                   />
-                  <Button onClick={handleSubmitQuestion} disabled={!newQuestion.trim()}>
-                    Post Question
-                  </Button>
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs text-muted-foreground">
+                      {newQuestion.length}/500 characters
+                    </p>
+                    <Button 
+                      onClick={handleSubmitQuestion} 
+                      disabled={!newQuestion.trim() || newQuestion.length > 500}
+                      className="flex items-center gap-2"
+                    >
+                      <Send size={16} />
+                      Post Question
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>
