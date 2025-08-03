@@ -10,9 +10,19 @@ import { Switch } from "@/components/ui/switch";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { MapPin, Clock, DollarSign, User, MessageSquare, Star, Calendar, AlertCircle, Timer, Camera, Send, Share2, Copy, Facebook, Twitter, Linkedin } from "lucide-react";
+import { MapPin, Clock, DollarSign, User, MessageSquare, Star, Calendar, AlertCircle, Timer, Camera, Send, Share2, Copy, Facebook, Twitter, Linkedin, CheckCircle } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
+import { VerifiedBadge } from "./VerifiedBadge";
+
+interface WinnerBid {
+  providerId: string;
+  providerName: string;
+  amount: number;
+  acceptedAt: string;
+  estimatedCompletion?: string;
+  completedAt?: string;
+}
 
 interface Job {
   id: string;
@@ -31,6 +41,7 @@ interface Job {
   status: string;
   imageUrls: string[];
   createdAt: string;
+  winnerBid?: WinnerBid;
 }
 
 interface Bid {
@@ -58,24 +69,31 @@ interface QAItem {
 }
 
 const mockJob: Job = {
-  id: "1",
-  title: "Interior House Painting - Living Room & Kitchen",
-  description: "Need professional painting services for my 1200 sq ft living room and kitchen. Walls are in good condition, just need a fresh coat of paint. I have specific color preferences and would like advice on paint selection. Looking for someone with experience in residential painting and attention to detail.",
-  category: "Home Improvement",
-  address: "Downtown Seattle, WA",
+  id: "2", // Using job 2 which has winnerBid in JobBoard
+  title: "Custom Tattoo Design & Application",
+  description: "Looking for skilled tattoo artist to create and apply a custom sleeve design. Traditional Japanese style preferred. Must provide portfolio of similar work.",
+  category: "Tattoo Studio",
+  address: "San Francisco, CA",
   paymentType: "fixed",
-  fixedPrice: 2800,
-  budgetMax: 3200,
+  fixedPrice: 1200,
+  budgetMax: 1500,
   urgencyLevel: "within_week",
   materialsProvided: false,
-  biddingEndDate: "2025-08-10T18:00:00Z",
-  status: "active",
+  biddingEndDate: "2024-02-20T18:00:00Z",
+  status: "in_progress",
   imageUrls: [
     "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&h=600&fit=crop",
     "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=600&fit=crop",
     "https://images.unsplash.com/photo-1585821569331-f071db2abd8d?w=800&h=600&fit=crop"
   ],
-  createdAt: "2025-08-01T10:00:00Z"
+  createdAt: "2024-01-18T10:00:00Z",
+  winnerBid: {
+    providerId: "p2",
+    providerName: "Ink & Steel Tattoos",
+    amount: 1100,
+    acceptedAt: "2024-01-20",
+    estimatedCompletion: "2024-02-18"
+  }
 };
 
 const mockBids: Bid[] = [
@@ -355,43 +373,115 @@ export const JobDetailsPage = ({ jobId, onBack }: { jobId: string; onBack: () =>
               <Star size={16} className={isFollowing ? "fill-current" : ""} />
               {isFollowing ? "Following" : "Follow"}
             </Button>
-            <Button onClick={() => setShowBidForm(true)} className="gradient-primary">
-              Place Bid
-            </Button>
+            {mockJob.status === 'open' && (
+              <Button onClick={() => setShowBidForm(true)} className="gradient-primary">
+                Place Bid
+              </Button>
+            )}
           </div>
         </div>
 
-        {/* Countdown Timer */}
-        <Card className="mb-6 border-orange-500/20 bg-gradient-to-r from-orange-500/10 to-red-500/10">
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-center gap-4">
-              <Timer className="text-orange-500" size={24} />
-              <div className="text-center">
-                <p className="text-sm text-muted-foreground">Bidding ends in</p>
-                <p className="text-2xl font-bold text-orange-500">{timeLeft}</p>
+        {/* Conditional Countdown Timer or Winner Information */}
+        {mockJob.status === 'open' ? (
+          <Card className="mb-6 border-orange-500/20 bg-gradient-to-r from-orange-500/10 to-red-500/10">
+            <CardContent className="pt-6">
+              <div className="flex items-center justify-center gap-4">
+                <Timer className="text-orange-500" size={24} />
+                <div className="text-center">
+                  <p className="text-sm text-muted-foreground">Bidding ends in</p>
+                  <p className="text-2xl font-bold text-orange-500">{timeLeft}</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-sm text-muted-foreground">Total Bids</p>
+                  <p className="text-2xl font-bold text-primary">{mockBids.length}</p>
+                </div>
               </div>
-              <div className="text-center">
-                <p className="text-sm text-muted-foreground">Total Bids</p>
-                <p className="text-2xl font-bold text-primary">{mockBids.length}</p>
+              
+              {/* Enhanced Place Bid Button */}
+              <div className="flex justify-center mt-6 pt-4 border-t border-orange-500/20">
+                <Button 
+                  onClick={() => setShowBidForm(true)} 
+                  size="lg"
+                  className="gradient-primary hover:scale-105 transform transition-all duration-300 shadow-lg hover:shadow-xl animate-pulse hover:animate-none px-8 py-3 text-lg font-semibold relative overflow-hidden group"
+                >
+                  <span className="relative z-10 flex items-center gap-2">
+                    <DollarSign size={20} className="animate-bounce" />
+                    PLACE BID NOW
+                  </span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-primary to-secondary opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                </Button>
               </div>
-            </div>
-            
-            {/* Enhanced Place Bid Button */}
-            <div className="flex justify-center mt-6 pt-4 border-t border-orange-500/20">
-              <Button 
-                onClick={() => setShowBidForm(true)} 
-                size="lg"
-                className="gradient-primary hover:scale-105 transform transition-all duration-300 shadow-lg hover:shadow-xl animate-pulse hover:animate-none px-8 py-3 text-lg font-semibold relative overflow-hidden group"
-              >
-                <span className="relative z-10 flex items-center gap-2">
-                  <DollarSign size={20} className="animate-bounce" />
-                  PLACE BID NOW
-                </span>
-                <div className="absolute inset-0 bg-gradient-to-r from-primary to-secondary opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        ) : mockJob.winnerBid ? (
+          <Card className="mb-6 border-green-500/20 bg-gradient-to-r from-green-500/10 to-blue-500/10">
+            <CardContent className="pt-6">
+              <div className="flex items-center justify-center gap-6 mb-6">
+                <CheckCircle className="text-green-500" size={32} />
+                <div className="text-center">
+                  <p className="text-sm text-muted-foreground">Project Status</p>
+                  <p className="text-2xl font-bold text-primary capitalize">{mockJob.status.replace('_', ' ')}</p>
+                </div>
+              </div>
+              
+              <div className="space-y-4 p-4 bg-card rounded-lg border">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <CheckCircle className="w-5 h-5 text-green-500" />
+                    <span className="font-semibold text-lg">Project Awarded</span>
+                  </div>
+                  <VerifiedBadge size="sm" variant="glow" />
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <User className="w-4 h-4 text-muted-foreground" />
+                      <span className="text-sm text-muted-foreground">Selected Provider:</span>
+                    </div>
+                    <p className="font-semibold text-primary">{mockJob.winnerBid.providerName}</p>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <DollarSign className="w-4 h-4 text-muted-foreground" />
+                      <span className="text-sm text-muted-foreground">Winning Bid:</span>
+                    </div>
+                    <p className="font-semibold text-green-600 text-lg">${mockJob.winnerBid.amount.toLocaleString()}</p>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <Calendar className="w-4 h-4 text-muted-foreground" />
+                      <span className="text-sm text-muted-foreground">Accepted On:</span>
+                    </div>
+                    <p className="font-medium">{new Date(mockJob.winnerBid.acceptedAt).toLocaleDateString()}</p>
+                  </div>
+                  
+                  {mockJob.status === 'in_progress' && mockJob.winnerBid.estimatedCompletion && (
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <Clock className="w-4 h-4 text-muted-foreground" />
+                        <span className="text-sm text-muted-foreground">Est. Completion:</span>
+                      </div>
+                      <p className="font-medium text-blue-600">{new Date(mockJob.winnerBid.estimatedCompletion).toLocaleDateString()}</p>
+                    </div>
+                  )}
+                  
+                  {mockJob.status === 'completed' && mockJob.winnerBid.completedAt && (
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <CheckCircle className="w-4 h-4 text-green-500" />
+                        <span className="text-sm text-muted-foreground">Completed On:</span>
+                      </div>
+                      <p className="font-medium text-green-600">{new Date(mockJob.winnerBid.completedAt).toLocaleDateString()}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ) : null}
 
         {/* Job Images & Details */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
