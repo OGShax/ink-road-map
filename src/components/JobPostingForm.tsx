@@ -23,7 +23,6 @@ interface JobFormData {
   paymentType: 'fixed' | 'hourly';
   fixedPrice?: number;
   hourlyRate?: number;
-  approximateHours?: number;
   budgetMax?: number;
   urgencyLevel: 'asap' | 'within_week' | 'flexible';
   materialsProvided: boolean;
@@ -101,7 +100,6 @@ export const JobPostingForm = ({ onClose }: { onClose: () => void }) => {
         }
         if (formData.paymentType === "hourly") {
           if (!formData.hourlyRate) newErrors.hourlyRate = "Hourly rate is required";
-          if (!formData.approximateHours) newErrors.approximateHours = "Approximate hours required";
         }
         break;
       case 3:
@@ -403,51 +401,28 @@ export const JobPostingForm = ({ onClose }: { onClose: () => void }) => {
                 )}
 
                 {formData.paymentType === "hourly" && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="hourlyRate" className="flex items-center gap-2">
-                        Hourly Rate
-                        <span className="text-destructive">*</span>
-                      </Label>
-                      <div className="relative">
-                        <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={16} />
-                        <Input
-                          id="hourlyRate"
-                          type="number"
-                          placeholder="0.00"
-                          className={cn("pl-10", errors.hourlyRate ? "border-destructive" : "")}
-                          value={formData.hourlyRate || ""}
-                          onChange={(e) => updateFormData("hourlyRate", parseFloat(e.target.value))}
-                        />
-                      </div>
-                      {errors.hourlyRate && (
-                        <p className="text-sm text-destructive flex items-center gap-1 mt-1">
-                          <AlertCircle size={14} />
-                          {errors.hourlyRate}
-                        </p>
-                      )}
-                    </div>
-                    <div>
-                      <Label htmlFor="approximateHours" className="flex items-center gap-2">
-                        <Clock size={16} />
-                        Approximate Hours
-                        <span className="text-destructive">*</span>
-                      </Label>
+                  <div>
+                    <Label htmlFor="hourlyRate" className="flex items-center gap-2">
+                      Hourly Rate
+                      <span className="text-destructive">*</span>
+                    </Label>
+                    <div className="relative">
+                      <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={16} />
                       <Input
-                        id="approximateHours"
+                        id="hourlyRate"
                         type="number"
-                        placeholder="40"
-                        className={errors.approximateHours ? "border-destructive" : ""}
-                        value={formData.approximateHours || ""}
-                        onChange={(e) => updateFormData("approximateHours", parseInt(e.target.value))}
+                        placeholder="0.00"
+                        className={cn("pl-10", errors.hourlyRate ? "border-destructive" : "")}
+                        value={formData.hourlyRate || ""}
+                        onChange={(e) => updateFormData("hourlyRate", parseFloat(e.target.value))}
                       />
-                      {errors.approximateHours && (
-                        <p className="text-sm text-destructive flex items-center gap-1 mt-1">
-                          <AlertCircle size={14} />
-                          {errors.approximateHours}
-                        </p>
-                      )}
                     </div>
+                    {errors.hourlyRate && (
+                      <p className="text-sm text-destructive flex items-center gap-1 mt-1">
+                        <AlertCircle size={14} />
+                        {errors.hourlyRate}
+                      </p>
+                    )}
                   </div>
                 )}
 
@@ -850,7 +825,7 @@ export const JobPostingForm = ({ onClose }: { onClose: () => void }) => {
                           <DollarSign size={14} />
                           {formData.paymentType === "fixed" 
                             ? `$${formData.fixedPrice?.toLocaleString() || "0"} (Fixed)`
-                            : `$${formData.hourlyRate || "0"}/hour × ${formData.approximateHours || "0"} hours`
+                            : `$${formData.hourlyRate || "0"}/hour`
                           }
                         </p>
                         {formData.budgetMax && (
