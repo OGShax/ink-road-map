@@ -10,7 +10,8 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon, Upload, X, Move, AlertCircle, MapPin, DollarSign, Clock, Save, Info, CreditCard, Shield } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { CalendarIcon, Upload, X, Move, AlertCircle, MapPin, DollarSign, Clock, Save, Info, CreditCard, Shield, Copy, Share2, ExternalLink, CheckCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
@@ -72,6 +73,8 @@ export const JobPostingForm = ({ onClose }: { onClose: () => void }) => {
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isDraft, setIsDraft] = useState(false);
+  const [showSharingDialog, setShowSharingDialog] = useState(false);
+  const [copiedItems, setCopiedItems] = useState<Record<string, boolean>>({});
   const { toast } = useToast();
 
   const updateFormData = (field: keyof JobFormData, value: any) => {
@@ -131,8 +134,73 @@ export const JobPostingForm = ({ onClose }: { onClose: () => void }) => {
         title: "Job Published",
         description: "Your job has been published successfully!",
       });
-      onClose();
+      setShowSharingDialog(true);
     }
+  };
+
+  const handleCopyToClipboard = async (text: string, key: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedItems(prev => ({ ...prev, [key]: true }));
+      toast({
+        title: "Copied!",
+        description: "Content copied to clipboard",
+      });
+      setTimeout(() => {
+        setCopiedItems(prev => ({ ...prev, [key]: false }));
+      }, 2000);
+    } catch (err) {
+      toast({
+        title: "Failed to copy",
+        description: "Please copy the text manually",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const generateSharingContent = () => {
+    const jobUrl = `https://proconnect.app/jobs/${Date.now()}`; // Placeholder URL
+    
+    const shortPost = `🚀 New ${formData.category} job available!
+
+"${formData.title}"
+
+Looking for talented professionals to help with this project.
+${formData.paymentType === "fixed" ? "Fixed project" : "Hourly work"} opportunity.
+
+Apply here: ${jobUrl}
+
+#freelance #${formData.category.replace(/\s+/g, '').toLowerCase()} #remote`;
+
+    const detailedPost = `🎯 Exciting ${formData.category} Opportunity Available!
+
+📋 Project: ${formData.title}
+
+📍 Location: ${formData.address}
+
+💼 Type: ${formData.paymentType === "fixed" ? "Fixed Price Project" : "Hourly Work"}
+${formData.approximatedBudget ? `💰 Budget: ~$${formData.approximatedBudget.toLocaleString()}` : ""}
+
+⏰ Urgency: ${formData.urgencyLevel === "asap" ? "ASAP" : formData.urgencyLevel === "within_week" ? "Within a week" : "Flexible timeline"}
+
+🔍 What we're looking for:
+${formData.description.substring(0, 200)}${formData.description.length > 200 ? "..." : ""}
+
+Ready to apply? Check out the full details: ${jobUrl}
+
+#freelancework #${formData.category.replace(/\s+/g, '').toLowerCase()} #hiring #remotework`;
+
+    const linkedInPost = `I'm looking for a skilled ${formData.category.toLowerCase()} professional for an exciting project opportunity.
+
+Project: ${formData.title}
+${formData.approximatedBudget ? `Budget: ~$${formData.approximatedBudget.toLocaleString()}` : ""}
+Timeline: ${formData.urgencyLevel === "asap" ? "Immediate start" : formData.urgencyLevel === "within_week" ? "Start within a week" : "Flexible start date"}
+
+If you're interested or know someone who might be, please check out the details here: ${jobUrl}
+
+#freelancer #${formData.category.replace(/\s+/g, '').toLowerCase()} #opportunity`;
+
+    return { shortPost, detailedPost, linkedInPost, jobUrl };
   };
 
   const progress = (currentStep / steps.length) * 100;
@@ -522,7 +590,6 @@ export const JobPostingForm = ({ onClose }: { onClose: () => void }) => {
                   </CardContent>
                 </Card>
 
-
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <Label>Urgency Level</Label>
@@ -617,6 +684,7 @@ export const JobPostingForm = ({ onClose }: { onClose: () => void }) => {
                           onSelect={(date) => updateFormData("biddingStartDate", date)}
                           disabled={(date) => date < new Date()}
                           initialFocus
+                          className="p-3 pointer-events-auto"
                         />
                       </PopoverContent>
                     </Popover>
@@ -655,6 +723,7 @@ export const JobPostingForm = ({ onClose }: { onClose: () => void }) => {
                           onSelect={(date) => updateFormData("biddingEndDate", date)}
                           disabled={(date) => date < new Date() || (formData.biddingStartDate && date <= formData.biddingStartDate)}
                           initialFocus
+                          className="p-3 pointer-events-auto"
                         />
                       </PopoverContent>
                     </Popover>
@@ -702,6 +771,7 @@ export const JobPostingForm = ({ onClose }: { onClose: () => void }) => {
                           onSelect={(date) => updateFormData("projectStartDate", date)}
                           disabled={(date) => date < new Date()}
                           initialFocus
+                          className="p-3 pointer-events-auto"
                         />
                       </PopoverContent>
                     </Popover>
@@ -738,6 +808,7 @@ export const JobPostingForm = ({ onClose }: { onClose: () => void }) => {
                             (formData.projectStartDate && date <= formData.projectStartDate)
                           }
                           initialFocus
+                          className="p-3 pointer-events-auto"
                         />
                       </PopoverContent>
                     </Popover>
@@ -986,16 +1057,16 @@ export const JobPostingForm = ({ onClose }: { onClose: () => void }) => {
 
           {/* Navigation */}
           <div className="flex justify-between p-6 border-t">
-            <Button
-              variant="outline"
-              onClick={handlePrevious}
-              disabled={currentStep === 1}
-            >
+            <Button variant="outline" onClick={handlePrevious} disabled={currentStep === 1}>
               Previous
             </Button>
             <div className="flex gap-2">
+              <Button variant="outline" onClick={handleSaveDraft}>
+                <Save size={16} className="mr-2" />
+                Save as Draft
+              </Button>
               {currentStep === steps.length ? (
-                <Button onClick={handlePublish} className="bg-gradient-to-r from-primary to-accent">
+                <Button onClick={handlePublish} className="bg-gradient-to-r from-primary to-accent hover:shadow-lg">
                   Publish Job
                 </Button>
               ) : (
@@ -1006,6 +1077,182 @@ export const JobPostingForm = ({ onClose }: { onClose: () => void }) => {
             </div>
           </div>
         </Card>
+
+        {/* Sharing Dialog */}
+        <Dialog open={showSharingDialog} onOpenChange={setShowSharingDialog}>
+          <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2 text-xl">
+                <Share2 size={24} className="text-primary" />
+                Boost Your Job Visibility!
+              </DialogTitle>
+              <DialogDescription className="text-base">
+                Share your job posting on social media and professional networks to attract more qualified bidders faster.
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="space-y-6">
+              {/* Benefits */}
+              <Card className="border-green-500/20 bg-green-500/5">
+                <CardContent className="p-4">
+                  <h3 className="font-medium text-green-800 dark:text-green-300 mb-2 flex items-center gap-2">
+                    <CheckCircle size={16} />
+                    Why Share Your Job Post?
+                  </h3>
+                  <ul className="text-sm text-green-700 dark:text-green-400 space-y-1">
+                    <li>• Get 3x more qualified applicants</li>
+                    <li>• Reduce time to hire by 50%</li>
+                    <li>• Reach professionals in your network</li>
+                    <li>• Increase project success rate</li>
+                  </ul>
+                </CardContent>
+              </Card>
+
+              {/* Sharing Content */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {(() => {
+                  const { shortPost, detailedPost, linkedInPost } = generateSharingContent();
+                  
+                  const sharingOptions = [
+                    {
+                      key: "short",
+                      title: "Twitter/X & Quick Posts",
+                      description: "Perfect for Twitter, Instagram stories, or quick social media posts",
+                      content: shortPost,
+                      platforms: ["Twitter/X", "Instagram", "Facebook"]
+                    },
+                    {
+                      key: "detailed",
+                      title: "Detailed Social Media Post",
+                      description: "Great for Facebook, professional groups, or community forums",
+                      content: detailedPost,
+                      platforms: ["Facebook", "Reddit", "Discord"]
+                    },
+                    {
+                      key: "linkedin",
+                      title: "LinkedIn Professional Post",
+                      description: "Optimized for LinkedIn and professional networks",
+                      content: linkedInPost,
+                      platforms: ["LinkedIn", "Professional Groups"]
+                    }
+                  ];
+
+                  return sharingOptions.map((option) => (
+                    <Card key={option.key} className="h-fit">
+                      <CardHeader className="pb-3">
+                        <CardTitle className="text-base">{option.title}</CardTitle>
+                        <CardDescription className="text-sm">{option.description}</CardDescription>
+                        <div className="flex gap-1 flex-wrap">
+                          {option.platforms.map((platform) => (
+                            <Badge key={platform} variant="secondary" className="text-xs">
+                              {platform}
+                            </Badge>
+                          ))}
+                        </div>
+                      </CardHeader>
+                      <CardContent className="space-y-3">
+                        <div className="bg-muted/50 p-3 rounded-lg text-sm max-h-32 overflow-y-auto">
+                          <pre className="whitespace-pre-wrap font-sans">{option.content}</pre>
+                        </div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleCopyToClipboard(option.content, option.key)}
+                          className="w-full"
+                        >
+                          {copiedItems[option.key] ? (
+                            <>
+                              <CheckCircle size={14} className="mr-2" />
+                              Copied!
+                            </>
+                          ) : (
+                            <>
+                              <Copy size={14} className="mr-2" />
+                              Copy to Clipboard
+                            </>
+                          )}
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  ));
+                })()}
+              </div>
+
+              {/* Recommended Platforms */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base flex items-center gap-2">
+                    <ExternalLink size={16} />
+                    Recommended Platforms to Share
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                    <div className="space-y-2">
+                      <h4 className="font-medium">Professional</h4>
+                      <ul className="space-y-1 text-muted-foreground">
+                        <li>• LinkedIn</li>
+                        <li>• AngelList</li>
+                        <li>• GitHub</li>
+                      </ul>
+                    </div>
+                    <div className="space-y-2">
+                      <h4 className="font-medium">Social Media</h4>
+                      <ul className="space-y-1 text-muted-foreground">
+                        <li>• Twitter/X</li>
+                        <li>• Facebook</li>
+                        <li>• Instagram</li>
+                      </ul>
+                    </div>
+                    <div className="space-y-2">
+                      <h4 className="font-medium">Communities</h4>
+                      <ul className="space-y-1 text-muted-foreground">
+                        <li>• Reddit</li>
+                        <li>• Discord</li>
+                        <li>• Slack groups</li>
+                      </ul>
+                    </div>
+                    <div className="space-y-2">
+                      <h4 className="font-medium">Direct Reach</h4>
+                      <ul className="space-y-1 text-muted-foreground">
+                        <li>• Email contacts</li>
+                        <li>• WhatsApp</li>
+                        <li>• Team chats</li>
+                      </ul>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Action Buttons */}
+              <div className="flex gap-3">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setShowSharingDialog(false);
+                    onClose();
+                  }}
+                  className="flex-1"
+                >
+                  Maybe Later
+                </Button>
+                <Button
+                  onClick={() => {
+                    setShowSharingDialog(false);
+                    onClose();
+                    toast({
+                      title: "Happy Sharing!",
+                      description: "Your job post is live and ready to attract great talent.",
+                    });
+                  }}
+                  className="flex-1 bg-gradient-to-r from-primary to-accent hover:shadow-lg"
+                >
+                  Done
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
