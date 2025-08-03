@@ -1,7 +1,7 @@
-import { NorwegianTruckTracker } from '@/components/NorwegianTruckTracker';
+import { JobBoard } from '@/components/JobBoard';
 
 const Index = () => {
-  return <NorwegianTruckTracker />;
+  return <JobBoard />;
 };
 
 export default Index;
