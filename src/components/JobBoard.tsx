@@ -15,6 +15,9 @@ import proConnectLogo from "@/assets/proconnect-logo.png";
 import teamCollaboration from "@/assets/team-collaboration.jpg";
 import remoteWork from "@/assets/remote-work.jpg";
 import creativeProcess from "@/assets/creative-process.jpg";
+import { Footer } from './Footer';
+import { VerifiedBadge } from './VerifiedBadge';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const mockJobs = [
   {
@@ -597,11 +600,11 @@ export const JobBoard = () => {
                           alt={provider.name}
                           className="w-16 h-16 rounded-full object-cover ring-2 ring-primary/20"
                         />
-                        {provider.verified && (
-                          <div className="absolute -bottom-1 -right-1 bg-green-500 text-white rounded-full p-1">
-                            <Star size={12} fill="currentColor" />
-                          </div>
-                        )}
+                         {provider.verified && (
+                           <div className="absolute -bottom-1 -right-1">
+                             <VerifiedBadge size="sm" showText={false} variant="glow" />
+                           </div>
+                         )}
                       </div>
                       <div className="space-y-1">
                         <h4 className="font-semibold text-sm">{provider.name}</h4>
@@ -724,6 +727,8 @@ export const JobBoard = () => {
           </CardContent>
         </Card>
       </div>
+      
+      <Footer />
     </div>
   );
 };
