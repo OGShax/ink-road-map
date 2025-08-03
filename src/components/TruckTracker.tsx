@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { MapPin, Clock, Calendar, Navigation } from 'lucide-react';
+import { MapPin, Clock, Calendar, Navigation, Globe } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Globe3D } from '@/components/Globe3D';
 import tattooTruckImage from '@/assets/tattoo-truck.png';
 
 interface Location {
   id: string;
   name: string;
   address: string;
-  coordinates: { x: number; y: number };
+  lat: number;
+  lng: number;
   status: 'current' | 'upcoming' | 'completed';
   arrivalTime?: string;
   duration?: string;
@@ -20,7 +23,8 @@ const locations: Location[] = [
     id: '1',
     name: 'Venice Beach',
     address: 'Venice Beach Boardwalk, CA',
-    coordinates: { x: 15, y: 75 },
+    lat: 33.9850,
+    lng: -118.4695,
     status: 'completed',
     date: 'Jan 15'
   },
@@ -28,7 +32,8 @@ const locations: Location[] = [
     id: '2',
     name: 'Santa Monica Pier',
     address: 'Santa Monica, CA',
-    coordinates: { x: 25, y: 70 },
+    lat: 34.0089,
+    lng: -118.4973,
     status: 'current',
     arrivalTime: 'Now',
     duration: '3 days',
@@ -38,7 +43,8 @@ const locations: Location[] = [
     id: '3',
     name: 'Hollywood Walk of Fame',
     address: 'Hollywood Blvd, CA',
-    coordinates: { x: 35, y: 65 },
+    lat: 34.1015,
+    lng: -118.3405,
     status: 'upcoming',
     arrivalTime: '2:00 PM',
     duration: '2 days',
@@ -46,9 +52,10 @@ const locations: Location[] = [
   },
   {
     id: '4',
-    name: 'Sunset Strip',
-    address: 'West Hollywood, CA',
-    coordinates: { x: 50, y: 60 },
+    name: 'Beverly Hills',
+    address: 'Beverly Hills, CA',
+    lat: 34.0736,
+    lng: -118.4004,
     status: 'upcoming',
     arrivalTime: '10:00 AM',
     duration: '4 days',
@@ -58,7 +65,8 @@ const locations: Location[] = [
     id: '5',
     name: 'Long Beach',
     address: 'Long Beach, CA',
-    coordinates: { x: 70, y: 80 },
+    lat: 33.7701,
+    lng: -118.1937,
     status: 'upcoming',
     arrivalTime: '1:00 PM',
     duration: '2 days',
@@ -128,93 +136,42 @@ export const TruckTracker = () => {
         </div>
       </header>
 
-      {/* Interactive Map */}
+      {/* Interactive 3D Globe */}
       <section className="container mx-auto px-4 py-12">
         <div className="grid lg:grid-cols-3 gap-8">
-          {/* Map Container */}
+          {/* Globe Container */}
           <div className="lg:col-span-2">
             <Card className="relative overflow-hidden truck-glow">
               <div className="aspect-[4/3] relative bg-gradient-to-br from-background to-card border-2 border-primary/20 rounded-lg">
-                {/* Map Background */}
-                <div className="absolute inset-0 opacity-10">
-                  <div className="w-full h-full bg-gradient-to-br from-primary/20 to-secondary/20 rounded-lg"></div>
+                <div className="absolute inset-4 rounded-lg">
+                  <Globe3D 
+                    selectedLocation={selectedLocation}
+                    onLocationSelect={setSelectedLocation}
+                  />
                 </div>
                 
-                {/* Street Grid */}
-                <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100">
-                  <defs>
-                    <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
-                      <path d="M 10 0 L 0 0 0 10" fill="none" stroke="currentColor" strokeWidth="0.1" opacity="0.3"/>
-                    </pattern>
-                  </defs>
-                  <rect width="100" height="100" fill="url(#grid)" />
-                  
-                  {/* Route Lines */}
-                  {locations.slice(0, -1).map((location, index) => {
-                    const nextLocation = locations[index + 1];
-                    return (
-                      <line
-                        key={`route-${location.id}`}
-                        x1={location.coordinates.x}
-                        y1={location.coordinates.y}
-                        x2={nextLocation.coordinates.x}
-                        y2={nextLocation.coordinates.y}
-                        stroke="url(#gradient)"
-                        strokeWidth="0.5"
-                        strokeDasharray="2,1"
-                        className="route-line"
-                      />
-                    );
-                  })}
-                  
-                  <defs>
-                    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" stopColor="hsl(var(--primary))" />
-                      <stop offset="50%" stopColor="hsl(var(--secondary))" />
-                      <stop offset="100%" stopColor="hsl(var(--tertiary))" />
-                    </linearGradient>
-                  </defs>
-                </svg>
-
-                {/* Location Markers */}
-                {locations.map((location) => (
-                  <div
-                    key={location.id}
-                    className="absolute transform -translate-x-1/2 -translate-y-1/2 cursor-pointer"
-                    style={{
-                      left: `${location.coordinates.x}%`,
-                      top: `${location.coordinates.y}%`,
-                    }}
-                    onClick={() => setSelectedLocation(location)}
-                  >
-                    <div
-                      className={`location-marker w-8 h-8 rounded-full flex items-center justify-center text-lg border-2 ${
-                        location.status === 'current'
-                          ? 'bg-primary text-primary-foreground border-primary-glow animate-glow-pulse'
-                          : location.status === 'upcoming'
-                          ? 'bg-secondary text-secondary-foreground border-secondary-glow'
-                          : 'bg-tertiary text-tertiary-foreground border-tertiary-glow'
-                      }`}
-                    >
-                      {getStatusIcon(location.status)}
-                    </div>
-                    
-                    {/* Location Label */}
-                    <div className="absolute top-full mt-2 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
-                      <div className="bg-card text-card-foreground px-2 py-1 rounded text-xs border border-border shadow-lg">
-                        {location.name}
-                      </div>
-                    </div>
+                {/* Globe Controls Info */}
+                <div className="absolute top-4 left-4 bg-card/90 backdrop-blur-sm text-card-foreground px-3 py-2 rounded-lg text-xs border border-border">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Globe className="w-3 h-3 text-primary" />
+                    <span className="font-semibold">3D Globe Controls</span>
                   </div>
-                ))}
-
-                {/* Truck Image */}
-                <div className="absolute bottom-4 right-4 truck-bounce">
-                  <img
-                    src={tattooTruckImage}
-                    alt="Tattoo Truck"
-                    className="w-24 h-12 object-contain drop-shadow-lg"
-                  />
+                  <div className="space-y-1 text-muted-foreground">
+                    <div>• Click & drag to rotate</div>
+                    <div>• Scroll to zoom</div>
+                    <div>• Click markers for details</div>
+                  </div>
+                </div>
+                
+                {/* Live Truck Status */}
+                <div className="absolute bottom-4 right-4 bg-primary/90 backdrop-blur-sm text-primary-foreground px-3 py-2 rounded-lg text-xs border border-primary-glow">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-lg animate-bounce">🚚</span>
+                    <span className="font-semibold">Truck Status: Live</span>
+                  </div>
+                  <div className="text-primary-glow">
+                    Currently traveling to next location
+                  </div>
                 </div>
               </div>
             </Card>
