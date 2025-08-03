@@ -129,7 +129,7 @@ const popularProviders = [
     specialties: ["Traditional", "Realism", "Custom"],
     location: "San Francisco, CA",
     image: "https://images.unsplash.com/photo-1568515387631-8b650bbcdb90?w=400&h=400&fit=crop",
-    verified: true
+    verified: false
   },
   {
     id: "p3",
@@ -151,7 +151,7 @@ const popularProviders = [
     specialties: ["Nail Art", "Acrylics", "Gel"],
     location: "Miami, FL",
     image: "https://images.unsplash.com/photo-1604654894610-df63bc536371?w=400&h=400&fit=crop",
-    verified: true
+    verified: false
   }
 ];
 

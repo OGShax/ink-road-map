@@ -32,7 +32,7 @@ export const VerifiedBadge = ({
       case 'glow':
         return {
           variant: 'glow' as const,
-          className: 'border-primary/20 bg-primary/10 text-primary animate-pulse'
+          className: 'border-primary/20 bg-primary/10 text-primary'
         };
       case 'minimal':
         return {
