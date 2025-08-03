@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { JobCard } from "@/components/JobCard";
 import { JobPostingForm } from "@/components/JobPostingForm";
 import { JobDetailsPage } from "@/components/JobDetailsPage";
@@ -68,11 +69,21 @@ const stats = [
 ];
 
 export const JobBoard = () => {
+  const { jobId } = useParams();
+  const navigate = useNavigate();
   const [currentView, setCurrentView] = useState<'board' | 'posting' | 'details'>('board');
   const [selectedJobId, setSelectedJobId] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
+
+  // Handle deep linking to job details
+  useEffect(() => {
+    if (jobId) {
+      setSelectedJobId(jobId);
+      setCurrentView('details');
+    }
+  }, [jobId]);
 
   const filteredJobs = mockJobs.filter(job => {
     const matchesSearch = job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -100,6 +111,7 @@ export const JobBoard = () => {
   const handleBackToBoard = () => {
     setCurrentView('board');
     setSelectedJobId("");
+    navigate('/');
   };
 
   if (currentView === 'posting') {

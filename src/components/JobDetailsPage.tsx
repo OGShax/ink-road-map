@@ -10,7 +10,8 @@ import { Switch } from "@/components/ui/switch";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { MapPin, Clock, DollarSign, User, MessageSquare, Star, Calendar, AlertCircle, Timer, Camera, Send } from "lucide-react";
+import { MapPin, Clock, DollarSign, User, MessageSquare, Star, Calendar, AlertCircle, Timer, Camera, Send, Share2, Copy, Facebook, Twitter, Linkedin } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 
 interface Job {
@@ -130,6 +131,7 @@ export const JobDetailsPage = ({ jobId, onBack }: { jobId: string; onBack: () =>
   const [showBidForm, setShowBidForm] = useState(false);
   const [newQuestion, setNewQuestion] = useState("");
   const [timeLeft, setTimeLeft] = useState("");
+  const [showShareDialog, setShowShareDialog] = useState(false);
   const [bidData, setBidData] = useState({
     amount: "",
     estimatedHours: "",
@@ -141,6 +143,11 @@ export const JobDetailsPage = ({ jobId, onBack }: { jobId: string; onBack: () =>
     includeMva: false
   });
   const { toast } = useToast();
+
+  // Generate shareable URL
+  const shareUrl = `${window.location.origin}/job/${jobId}`;
+  const shareTitle = `Check out this job: ${mockJob.title}`;
+  const shareDescription = mockJob.description.slice(0, 150) + "...";
 
   // Countdown timer for bidding deadline
   useEffect(() => {
@@ -207,6 +214,50 @@ export const JobDetailsPage = ({ jobId, onBack }: { jobId: string; onBack: () =>
     }
   };
 
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      toast({
+        title: "Link Copied!",
+        description: "The job link has been copied to your clipboard.",
+      });
+    } catch (err) {
+      toast({
+        title: "Failed to copy",
+        description: "Please copy the link manually.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleSocialShare = (platform: string) => {
+    const encodedUrl = encodeURIComponent(shareUrl);
+    const encodedTitle = encodeURIComponent(shareTitle);
+    const encodedDescription = encodeURIComponent(shareDescription);
+    
+    let shareLink = '';
+    
+    switch (platform) {
+      case 'facebook':
+        shareLink = `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
+        break;
+      case 'twitter':
+        shareLink = `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`;
+        break;
+      case 'linkedin':
+        shareLink = `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`;
+        break;
+      case 'whatsapp':
+        shareLink = `https://wa.me/?text=${encodedTitle}%20${encodedUrl}`;
+        break;
+      default:
+        return;
+    }
+    
+    window.open(shareLink, '_blank', 'width=600,height=400');
+    setShowShareDialog(false);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-primary/5">
       <div className="container mx-auto px-4 py-8">
@@ -230,6 +281,72 @@ export const JobDetailsPage = ({ jobId, onBack }: { jobId: string; onBack: () =>
             </div>
           </div>
           <div className="flex gap-2">
+            <Dialog open={showShareDialog} onOpenChange={setShowShareDialog}>
+              <DialogTrigger asChild>
+                <Button variant="outline" className="flex items-center gap-2">
+                  <Share2 size={16} />
+                  Share
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle>Share this job</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div className="p-4 border rounded-lg bg-muted/50">
+                    <h4 className="font-semibold text-sm mb-1">{mockJob.title}</h4>
+                    <p className="text-xs text-muted-foreground">{shareDescription}</p>
+                    <p className="text-xs text-primary mt-2">{shareUrl}</p>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-3">
+                    <Button 
+                      variant="outline" 
+                      onClick={() => handleSocialShare('facebook')}
+                      className="flex items-center gap-2 h-12"
+                    >
+                      <Facebook size={18} className="text-blue-600" />
+                      Facebook
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      onClick={() => handleSocialShare('twitter')}
+                      className="flex items-center gap-2 h-12"
+                    >
+                      <Twitter size={18} className="text-blue-400" />
+                      Twitter
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      onClick={() => handleSocialShare('linkedin')}
+                      className="flex items-center gap-2 h-12"
+                    >
+                      <Linkedin size={18} className="text-blue-700" />
+                      LinkedIn
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      onClick={() => handleSocialShare('whatsapp')}
+                      className="flex items-center gap-2 h-12"
+                    >
+                      <MessageSquare size={18} className="text-green-600" />
+                      WhatsApp
+                    </Button>
+                  </div>
+                  
+                  <div className="flex gap-2">
+                    <Button 
+                      variant="secondary" 
+                      onClick={handleCopyLink}
+                      className="flex-1 flex items-center gap-2"
+                    >
+                      <Copy size={16} />
+                      Copy Link
+                    </Button>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
             <Button
               variant={isFollowing ? "default" : "outline"}
               onClick={handleFollow}
