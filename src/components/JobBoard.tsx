@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Slider } from "@/components/ui/slider";
-import { Plus, Search, Filter, Users, TrendingUp, DollarSign, Clock, MapPin, X, Briefcase, Palette, Code, BarChart3, Camera, ChevronDown, ChevronUp, HelpCircle, Star, Share2, MessageCircle } from "lucide-react";
+import { Plus, Search, Filter, Users, TrendingUp, DollarSign, Clock, MapPin, X, Briefcase, Palette, Code, BarChart3, Camera, ChevronDown, ChevronUp, HelpCircle, Star, Share2, MessageCircle, User } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import proConnectLogo from "@/assets/proconnect-logo.png";
@@ -17,7 +17,7 @@ import remoteWork from "@/assets/remote-work.jpg";
 import creativeProcess from "@/assets/creative-process.jpg";
 import { Footer } from './Footer';
 import { VerifiedBadge } from './VerifiedBadge';
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const mockJobs = [
   {
@@ -189,10 +189,16 @@ export const JobBoard = () => {
   const navigate = useNavigate();
   const [currentView, setCurrentView] = useState<'board' | 'posting' | 'details'>('board');
   const [selectedJobId, setSelectedJobId] = useState<string>("");
+  const [activeTab, setActiveTab] = useState("jobs");
   const [searchTerm, setSearchTerm] = useState("");
+  const [providerSearchTerm, setProviderSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [locationFilter, setLocationFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [providerCategoryFilter, setProviderCategoryFilter] = useState("all");
+  const [providerLocationFilter, setProviderLocationFilter] = useState("all");
+  const [ratingFilter, setRatingFilter] = useState("all");
+  const [verifiedFilter, setVerifiedFilter] = useState("all");
   const [showAllCategories, setShowAllCategories] = useState(false);
   const [kmRange, setKmRange] = useState([50]);
   const [showTips, setShowTips] = useState(false);
@@ -204,6 +210,22 @@ export const JobBoard = () => {
       setCurrentView('details');
     }
   }, [jobId]);
+
+  const filteredProviders = popularProviders.filter(provider => {
+    const matchesSearch = provider.name.toLowerCase().includes(providerSearchTerm.toLowerCase()) ||
+                         provider.category.toLowerCase().includes(providerSearchTerm.toLowerCase()) ||
+                         provider.specialties.some(specialty => specialty.toLowerCase().includes(providerSearchTerm.toLowerCase()));
+    const matchesCategory = providerCategoryFilter === "all" || provider.category === providerCategoryFilter;
+    const matchesLocation = providerLocationFilter === "all" || provider.location === providerLocationFilter;
+    const matchesRating = ratingFilter === "all" || 
+                         (ratingFilter === "4+" && provider.rating >= 4) ||
+                         (ratingFilter === "4.5+" && provider.rating >= 4.5);
+    const matchesVerified = verifiedFilter === "all" || 
+                           (verifiedFilter === "verified" && provider.verified) ||
+                           (verifiedFilter === "unverified" && !provider.verified);
+    
+    return matchesSearch && matchesCategory && matchesLocation && matchesRating && matchesVerified;
+  });
 
   const filteredJobs = mockJobs.filter(job => {
     const matchesSearch = job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -236,10 +258,18 @@ export const JobBoard = () => {
   };
 
   const clearAllFilters = () => {
-    setSearchTerm("");
-    setCategoryFilter("all");
-    setLocationFilter("all");
-    setStatusFilter("all");
+    if (activeTab === "jobs") {
+      setSearchTerm("");
+      setCategoryFilter("all");
+      setLocationFilter("all");
+      setStatusFilter("all");
+    } else {
+      setProviderSearchTerm("");
+      setProviderCategoryFilter("all");
+      setProviderLocationFilter("all");
+      setRatingFilter("all");
+      setVerifiedFilter("all");
+    }
   };
 
   if (currentView === 'posting') {
@@ -338,98 +368,203 @@ export const JobBoard = () => {
           </Card>
         </div>
 
-        {/* Compact Search and Filters */}
-        <Card className="mb-6 shadow-md bg-gradient-to-r from-primary/5 to-accent/5">
-          <CardContent className="pt-6">
-            <div className="space-y-4">
-              {/* Search Bar */}
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={20} />
-                <Input
-                  placeholder="Search jobs by title, description, or skills..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 h-11 text-base"
-                />
-              </div>
+        {/* Main Content Tabs */}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="jobs" className="flex items-center gap-2">
+              <Briefcase size={16} />
+              Jobs ({filteredJobs.length})
+            </TabsTrigger>
+            <TabsTrigger value="providers" className="flex items-center gap-2">
+              <User size={16} />
+              Providers ({filteredProviders.length})
+            </TabsTrigger>
+          </TabsList>
 
-              {/* Compact Filter Row */}
-              <div className="flex flex-wrap gap-3">
-                <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                  <SelectTrigger className="w-auto min-w-[140px] h-9 bg-background">
-                    <SelectValue placeholder="Category" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-background border shadow-lg z-50">
-                    <SelectItem value="all">All Categories</SelectItem>
-                    {categories.map((category) => (
-                      <SelectItem key={category.value} value={category.value}>
-                        <div className="flex items-center gap-2">
-                          <category.icon size={14} className={category.color} />
-                          {category.label}
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+          <TabsContent value="jobs">
+            {/* Jobs Search and Filters */}
+            <Card className="mb-6 shadow-md bg-gradient-to-r from-primary/5 to-accent/5">
+              <CardContent className="pt-6">
+                <div className="space-y-4">
+                  {/* Search Bar */}
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={20} />
+                    <Input
+                      placeholder="Search jobs by title, description, or skills..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="pl-10 h-11 text-base"
+                    />
+                  </div>
 
-                <Select value={locationFilter} onValueChange={setLocationFilter}>
-                  <SelectTrigger className="w-auto min-w-[140px] h-9 bg-background">
-                    <SelectValue placeholder="Location" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-background border shadow-lg z-50">
-                    <SelectItem value="all">All Locations</SelectItem>
-                    {popularLocations.map((location) => (
-                      <SelectItem key={location} value={location}>
-                        <div className="flex items-center gap-2">
-                          <MapPin size={14} className="text-muted-foreground" />
-                          {location}
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                  {/* Job Filters */}
+                  <div className="flex flex-wrap gap-3">
+                    <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                      <SelectTrigger className="w-auto min-w-[140px] h-9 bg-background">
+                        <SelectValue placeholder="Category" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-background border shadow-lg z-50">
+                        <SelectItem value="all">All Categories</SelectItem>
+                        {categories.map((category) => (
+                          <SelectItem key={category.value} value={category.value}>
+                            <div className="flex items-center gap-2">
+                              <category.icon size={14} className={category.color} />
+                              {category.label}
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
 
-                <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger className="w-auto min-w-[120px] h-9 bg-background">
-                    <SelectValue placeholder="Status" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-background border shadow-lg z-50">
-                    <SelectItem value="all">All Status</SelectItem>
-                    <SelectItem value="open">Open</SelectItem>
-                    <SelectItem value="in_progress">In Progress</SelectItem>
-                    <SelectItem value="completed">Completed</SelectItem>
-                  </SelectContent>
-                </Select>
+                    <Select value={locationFilter} onValueChange={setLocationFilter}>
+                      <SelectTrigger className="w-auto min-w-[140px] h-9 bg-background">
+                        <SelectValue placeholder="Location" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-background border shadow-lg z-50">
+                        <SelectItem value="all">All Locations</SelectItem>
+                        {popularLocations.map((location) => (
+                          <SelectItem key={location} value={location}>
+                            <div className="flex items-center gap-2">
+                              <MapPin size={14} className="text-muted-foreground" />
+                              {location}
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
 
-                {/* Compact Distance Filter */}
-                <div className="flex items-center gap-2 bg-background border rounded-md px-3 py-1">
-                  <MapPin size={14} className="text-muted-foreground" />
-                  <span className="text-sm text-muted-foreground">Within:</span>
-                  <input 
-                    type="range" 
-                    min="5" 
-                    max="200" 
-                    step="5" 
-                    value={kmRange[0]} 
-                    onChange={(e) => setKmRange([parseInt(e.target.value)])}
-                    className="w-16 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-                  />
-                  <span className="text-sm font-medium min-w-[35px]">{kmRange[0]}km</span>
+                    <Select value={statusFilter} onValueChange={setStatusFilter}>
+                      <SelectTrigger className="w-auto min-w-[120px] h-9 bg-background">
+                        <SelectValue placeholder="Status" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-background border shadow-lg z-50">
+                        <SelectItem value="all">All Status</SelectItem>
+                        <SelectItem value="open">Open</SelectItem>
+                        <SelectItem value="in_progress">In Progress</SelectItem>
+                        <SelectItem value="completed">Completed</SelectItem>
+                      </SelectContent>
+                    </Select>
+
+                    {/* Distance Filter */}
+                    <div className="flex items-center gap-2 bg-background border rounded-md px-3 py-1">
+                      <MapPin size={14} className="text-muted-foreground" />
+                      <span className="text-sm text-muted-foreground">Within:</span>
+                      <input 
+                        type="range" 
+                        min="5" 
+                        max="200" 
+                        step="5" 
+                        value={kmRange[0]} 
+                        onChange={(e) => setKmRange([parseInt(e.target.value)])}
+                        className="w-16 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                      />
+                      <span className="text-sm font-medium min-w-[35px]">{kmRange[0]}km</span>
+                    </div>
+
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={clearAllFilters}
+                      className="h-9 flex items-center gap-2 hover:bg-destructive hover:text-destructive-foreground transition-colors"
+                    >
+                      <X size={14} />
+                      Clear
+                    </Button>
+                  </div>
                 </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={clearAllFilters}
-                  className="h-9 flex items-center gap-2 hover:bg-destructive hover:text-destructive-foreground transition-colors"
-                >
-                  <X size={14} />
-                  Clear
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+          <TabsContent value="providers">
+            {/* Providers Search and Filters */}
+            <Card className="mb-6 shadow-md bg-gradient-to-r from-accent/5 to-primary/5">
+              <CardContent className="pt-6">
+                <div className="space-y-4">
+                  {/* Provider Search Bar */}
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={20} />
+                    <Input
+                      placeholder="Search providers by name, category, or specialties..."
+                      value={providerSearchTerm}
+                      onChange={(e) => setProviderSearchTerm(e.target.value)}
+                      className="pl-10 h-11 text-base"
+                    />
+                  </div>
+
+                  {/* Provider Filters */}
+                  <div className="flex flex-wrap gap-3">
+                    <Select value={providerCategoryFilter} onValueChange={setProviderCategoryFilter}>
+                      <SelectTrigger className="w-auto min-w-[140px] h-9 bg-background">
+                        <SelectValue placeholder="Category" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-background border shadow-lg z-50">
+                        <SelectItem value="all">All Categories</SelectItem>
+                        {categories.map((category) => (
+                          <SelectItem key={category.value} value={category.value}>
+                            <div className="flex items-center gap-2">
+                              <category.icon size={14} className={category.color} />
+                              {category.label}
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+
+                    <Select value={providerLocationFilter} onValueChange={setProviderLocationFilter}>
+                      <SelectTrigger className="w-auto min-w-[140px] h-9 bg-background">
+                        <SelectValue placeholder="Location" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-background border shadow-lg z-50">
+                        <SelectItem value="all">All Locations</SelectItem>
+                        {popularLocations.map((location) => (
+                          <SelectItem key={location} value={location}>
+                            <div className="flex items-center gap-2">
+                              <MapPin size={14} className="text-muted-foreground" />
+                              {location}
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+
+                    <Select value={ratingFilter} onValueChange={setRatingFilter}>
+                      <SelectTrigger className="w-auto min-w-[120px] h-9 bg-background">
+                        <SelectValue placeholder="Rating" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-background border shadow-lg z-50">
+                        <SelectItem value="all">All Ratings</SelectItem>
+                        <SelectItem value="4.5+">4.5+ Stars</SelectItem>
+                        <SelectItem value="4+">4+ Stars</SelectItem>
+                      </SelectContent>
+                    </Select>
+
+                    <Select value={verifiedFilter} onValueChange={setVerifiedFilter}>
+                      <SelectTrigger className="w-auto min-w-[120px] h-9 bg-background">
+                        <SelectValue placeholder="Verification" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-background border shadow-lg z-50">
+                        <SelectItem value="all">All Providers</SelectItem>
+                        <SelectItem value="verified">Verified Only</SelectItem>
+                        <SelectItem value="unverified">Unverified</SelectItem>
+                      </SelectContent>
+                    </Select>
+
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={clearAllFilters}
+                      className="h-9 flex items-center gap-2 hover:bg-destructive hover:text-destructive-foreground transition-colors"
+                    >
+                      <X size={14} />
+                      Clear
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
 
         {/* Tips Section */}
         {showTips && (
@@ -555,7 +690,7 @@ export const JobBoard = () => {
         </Card>
 
         {/* Active Filters */}
-        {(categoryFilter !== "all" || locationFilter !== "all" || statusFilter !== "all" || searchTerm) && (
+        {activeTab === "jobs" && (categoryFilter !== "all" || locationFilter !== "all" || statusFilter !== "all" || searchTerm) && (
           <div className="flex flex-wrap gap-2 mb-6">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Filter size={16} />
@@ -584,30 +719,128 @@ export const JobBoard = () => {
           </div>
         )}
 
-        {/* Popular Providers Section */}
-        <Card className="mb-8 shadow-md">
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-semibold flex items-center gap-2">
-                <Star size={20} className="text-primary" />
-                Popular Providers in Your Area
-              </h3>
-              <Button variant="outline" size="sm">View All</Button>
+        {activeTab === "providers" && (providerCategoryFilter !== "all" || providerLocationFilter !== "all" || ratingFilter !== "all" || verifiedFilter !== "all" || providerSearchTerm) && (
+          <div className="flex flex-wrap gap-2 mb-6">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Filter size={16} />
+              <span>Active:</span>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {popularProviders.map((provider) => (
+            {providerSearchTerm && (
+              <Badge variant="secondary" className="cursor-pointer hover:bg-destructive hover:text-destructive-foreground transition-colors" onClick={() => setProviderSearchTerm("")}>
+                "{providerSearchTerm}" <X size={12} className="ml-1" />
+              </Badge>
+            )}
+            {providerCategoryFilter !== "all" && (
+              <Badge variant="secondary" className="cursor-pointer hover:bg-destructive hover:text-destructive-foreground transition-colors" onClick={() => setProviderCategoryFilter("all")}>
+                {providerCategoryFilter} <X size={12} className="ml-1" />
+              </Badge>
+            )}
+            {providerLocationFilter !== "all" && (
+              <Badge variant="secondary" className="cursor-pointer hover:bg-destructive hover:text-destructive-foreground transition-colors" onClick={() => setProviderLocationFilter("all")}>
+                {providerLocationFilter} <X size={12} className="ml-1" />
+              </Badge>
+            )}
+            {ratingFilter !== "all" && (
+              <Badge variant="secondary" className="cursor-pointer hover:bg-destructive hover:text-destructive-foreground transition-colors" onClick={() => setRatingFilter("all")}>
+                {ratingFilter} <X size={12} className="ml-1" />
+              </Badge>
+            )}
+            {verifiedFilter !== "all" && (
+              <Badge variant="secondary" className="cursor-pointer hover:bg-destructive hover:text-destructive-foreground transition-colors" onClick={() => setVerifiedFilter("all")}>
+                {verifiedFilter} <X size={12} className="ml-1" />
+              </Badge>
+            )}
+          </div>
+        )}
+
+        {/* Results Header */}
+        {activeTab === "jobs" && (
+          <>
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-semibold">
+                {filteredJobs.length === 0 ? "No jobs found" : `${filteredJobs.length} job${filteredJobs.length !== 1 ? 's' : ''} found`}
+              </h2>
+              {filteredJobs.length > 0 && (
+                <Select defaultValue="newest">
+                  <SelectTrigger className="w-48">
+                    <SelectValue placeholder="Sort by" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-background border shadow-lg z-50">
+                    <SelectItem value="newest">Newest First</SelectItem>
+                    <SelectItem value="budget-high">Highest Budget</SelectItem>
+                    <SelectItem value="budget-low">Lowest Budget</SelectItem>
+                    <SelectItem value="deadline">Deadline</SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
+            </div>
+
+            {/* Job Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredJobs.map((job) => (
+                <JobCard
+                  key={job.id}
+                  {...job}
+                  onViewJob={handleViewJob}
+                  onBid={handleBid}
+                />
+              ))}
+            </div>
+
+            {filteredJobs.length === 0 && (
+              <Card className="text-center py-12">
+                <CardContent>
+                  <div className="max-w-md mx-auto">
+                    <Search size={64} className="mx-auto mb-4 text-muted-foreground opacity-50" />
+                    <h3 className="text-xl font-semibold mb-2">No jobs found</h3>
+                    <p className="text-muted-foreground mb-6">
+                      We couldn't find any jobs matching your criteria. Try adjusting your filters or search terms.
+                    </p>
+                    <Button onClick={clearAllFilters} variant="outline">
+                      Clear All Filters
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </>
+        )}
+
+        {activeTab === "providers" && (
+          <>
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-semibold">
+                {filteredProviders.length === 0 ? "No providers found" : `${filteredProviders.length} provider${filteredProviders.length !== 1 ? 's' : ''} found`}
+              </h2>
+              {filteredProviders.length > 0 && (
+                <Select defaultValue="rating">
+                  <SelectTrigger className="w-48">
+                    <SelectValue placeholder="Sort by" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-background border shadow-lg z-50">
+                    <SelectItem value="rating">Highest Rated</SelectItem>
+                    <SelectItem value="reviews">Most Reviews</SelectItem>
+                    <SelectItem value="name">Name A-Z</SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
+            </div>
+
+            {/* Provider Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {filteredProviders.map((provider) => (
                 <Card 
                   key={provider.id} 
                   className="group hover:shadow-lg transition-all duration-300 hover:scale-105 cursor-pointer"
                   onClick={() => navigate(`/provider/${provider.id}`)}
                 >
-                  <CardContent className="p-4">
-                    <div className="flex flex-col items-center text-center space-y-3">
+                  <CardContent className="p-6">
+                    <div className="flex flex-col items-center text-center space-y-4">
                       <div className="relative">
                         <img 
                           src={provider.image} 
                           alt={provider.name}
-                          className="w-16 h-16 rounded-full object-cover ring-2 ring-primary/20"
+                          className="w-20 h-20 rounded-full object-cover ring-2 ring-primary/20"
                         />
                          {provider.verified && (
                            <div className="absolute -bottom-1 -right-1">
@@ -615,24 +848,24 @@ export const JobBoard = () => {
                            </div>
                          )}
                       </div>
-                      <div className="space-y-1">
-                        <h4 className="font-semibold text-sm">{provider.name}</h4>
-                        <p className="text-xs text-muted-foreground">{provider.category}</p>
+                      <div className="space-y-2">
+                        <h4 className="font-semibold text-base">{provider.name}</h4>
+                        <p className="text-sm text-muted-foreground">{provider.category}</p>
                         <div className="flex items-center gap-1 justify-center">
-                          <Star size={12} className="text-yellow-500 fill-current" />
-                          <span className="text-xs font-medium">{provider.rating}</span>
-                          <span className="text-xs text-muted-foreground">({provider.reviewCount})</span>
+                          <Star size={14} className="text-yellow-500 fill-current" />
+                          <span className="text-sm font-medium">{provider.rating}</span>
+                          <span className="text-sm text-muted-foreground">({provider.reviewCount})</span>
                         </div>
                       </div>
                       <div className="flex flex-wrap gap-1 justify-center">
-                        {provider.specialties.slice(0, 2).map((specialty) => (
+                        {provider.specialties.slice(0, 3).map((specialty) => (
                           <Badge key={specialty} variant="secondary" className="text-xs px-2 py-0">
                             {specialty}
                           </Badge>
                         ))}
                       </div>
                       <p className="text-xs text-muted-foreground flex items-center gap-1">
-                        <MapPin size={10} />
+                        <MapPin size={12} />
                         {provider.location}
                       </p>
                     </div>
@@ -640,56 +873,24 @@ export const JobBoard = () => {
                 </Card>
               ))}
             </div>
-          </CardContent>
-        </Card>
 
-        {/* Results Header */}
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-semibold">
-            {filteredJobs.length === 0 ? "No jobs found" : `${filteredJobs.length} job${filteredJobs.length !== 1 ? 's' : ''} found`}
-          </h2>
-          {filteredJobs.length > 0 && (
-            <Select defaultValue="newest">
-              <SelectTrigger className="w-48">
-                <SelectValue placeholder="Sort by" />
-              </SelectTrigger>
-              <SelectContent className="bg-background border shadow-lg z-50">
-                <SelectItem value="newest">Newest First</SelectItem>
-                <SelectItem value="budget-high">Highest Budget</SelectItem>
-                <SelectItem value="budget-low">Lowest Budget</SelectItem>
-                <SelectItem value="deadline">Deadline</SelectItem>
-              </SelectContent>
-            </Select>
-          )}
-        </div>
-
-        {/* Job Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredJobs.map((job) => (
-            <JobCard
-              key={job.id}
-              {...job}
-              onViewJob={handleViewJob}
-              onBid={handleBid}
-            />
-          ))}
-        </div>
-
-        {filteredJobs.length === 0 && (
-          <Card className="text-center py-12">
-            <CardContent>
-              <div className="max-w-md mx-auto">
-                <Search size={64} className="mx-auto mb-4 text-muted-foreground opacity-50" />
-                <h3 className="text-xl font-semibold mb-2">No jobs found</h3>
-                <p className="text-muted-foreground mb-6">
-                  We couldn't find any jobs matching your criteria. Try adjusting your filters or search terms.
-                </p>
-                <Button onClick={clearAllFilters} variant="outline">
-                  Clear All Filters
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+            {filteredProviders.length === 0 && (
+              <Card className="text-center py-12">
+                <CardContent>
+                  <div className="max-w-md mx-auto">
+                    <User size={64} className="mx-auto mb-4 text-muted-foreground opacity-50" />
+                    <h3 className="text-xl font-semibold mb-2">No providers found</h3>
+                    <p className="text-muted-foreground mb-6">
+                      We couldn't find any providers matching your criteria. Try adjusting your filters or search terms.
+                    </p>
+                    <Button onClick={clearAllFilters} variant="outline">
+                      Clear All Filters
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </>
         )}
 
         {/* Custom Job Request Section */}
