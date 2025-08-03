@@ -117,7 +117,7 @@ export const Footer = () => {
               </li>
               <li>
                 <button 
-                  onClick={() => window.open('https://benefits.proconnect.com', '_blank')} 
+                  onClick={() => handleLinkClick('/provider-benefits')} 
                   className="text-muted-foreground hover:text-primary transition-colors"
                 >
                   Provider Benefits
@@ -125,7 +125,7 @@ export const Footer = () => {
               </li>
               <li>
                 <button 
-                  onClick={() => window.open('https://verification.proconnect.com', '_blank')} 
+                  onClick={() => handleLinkClick('/get-verified')} 
                   className="text-muted-foreground hover:text-primary transition-colors flex items-center gap-1"
                 >
                   <Award className="w-4 h-4" />
@@ -143,7 +143,7 @@ export const Footer = () => {
               </li>
               <li>
                 <button 
-                  onClick={() => window.open('https://resources.proconnect.com', '_blank')} 
+                  onClick={() => handleLinkClick('/resources-tools')} 
                   className="text-muted-foreground hover:text-primary transition-colors"
                 >
                   Resources & Tools
@@ -178,7 +178,7 @@ export const Footer = () => {
             <ul className="space-y-1 text-sm">
               <li>
                 <button 
-                  onClick={() => window.open('https://legal.proconnect.com/privacy', '_blank')} 
+                  onClick={() => handleLinkClick('/privacy-policy')} 
                   className="text-muted-foreground hover:text-primary transition-colors"
                 >
                   Privacy Policy
@@ -186,7 +186,7 @@ export const Footer = () => {
               </li>
               <li>
                 <button 
-                  onClick={() => window.open('https://legal.proconnect.com/terms', '_blank')} 
+                  onClick={() => handleLinkClick('/terms-of-service')} 
                   className="text-muted-foreground hover:text-primary transition-colors"
                 >
                   Terms of Service
@@ -194,7 +194,7 @@ export const Footer = () => {
               </li>
               <li>
                 <button 
-                  onClick={() => window.open('https://legal.proconnect.com/cookies', '_blank')} 
+                  onClick={() => handleLinkClick('/cookie-policy')} 
                   className="text-muted-foreground hover:text-primary transition-colors"
                 >
                   Cookie Policy

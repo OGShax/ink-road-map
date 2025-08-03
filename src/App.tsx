@@ -16,6 +16,10 @@ import ProviderBenefits from "./pages/ProviderBenefits";
 import GetVerified from "./pages/GetVerified";
 import ResourcesTools from "./pages/ResourcesTools";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
+import { BecomeProvider } from "./pages/BecomeProvider";
+import { ProSubscription } from "./pages/ProSubscription";
+import { TermsOfService } from "./pages/TermsOfService";
+import { CookiePolicy } from "./pages/CookiePolicy";
 
 const queryClient = new QueryClient();
 
@@ -31,8 +35,7 @@ const App = () => (
           <Route path="/provider/:providerId" element={<ProviderProfile />} />
           <Route path="/staff/:staffId" element={<StaffProfile />} />
           <Route path="/study-center" element={<StudyCenter />} />
-          <Route path="/pro-subscription" element={<MonetizationDashboard />} />
-          <Route path="/become-provider" element={<MonetizationDashboard />} />
+          <Route path="/monetization" element={<MonetizationDashboard />} />
           <Route path="/support" element={<Support />} />
           <Route path="/how-it-works" element={<HowItWorks />} />
           <Route path="/safety-guarantee" element={<SafetyGuarantee />} />
@@ -40,6 +43,10 @@ const App = () => (
           <Route path="/get-verified" element={<GetVerified />} />
           <Route path="/resources-tools" element={<ResourcesTools />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/become-provider" element={<BecomeProvider />} />
+          <Route path="/pro-subscription" element={<ProSubscription />} />
+          <Route path="/terms-of-service" element={<TermsOfService />} />
+          <Route path="/cookie-policy" element={<CookiePolicy />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
