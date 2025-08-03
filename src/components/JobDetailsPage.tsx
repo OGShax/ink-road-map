@@ -10,7 +10,7 @@ import { Switch } from "@/components/ui/switch";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { MapPin, Clock, DollarSign, User, MessageSquare, Star, Calendar, AlertCircle, Timer, Camera, Send, Share2, Copy, Facebook, Twitter, Linkedin, CheckCircle } from "lucide-react";
+import { MapPin, Clock, DollarSign, User, MessageSquare, Star, Calendar, AlertCircle, Timer, Camera, Send, Share2, Copy, Facebook, Twitter, Linkedin, CheckCircle, TrendingUp, MessageCircle } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { VerifiedBadge } from "./VerifiedBadge";
@@ -80,42 +80,49 @@ const mockJob: Job = {
   urgencyLevel: "within_week",
   materialsProvided: false,
   biddingEndDate: "2024-02-20T18:00:00Z",
-  status: "in_progress",
+  status: "open", // Change to open to test bid functionality
   imageUrls: [
     "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&h=600&fit=crop",
     "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=600&fit=crop",
     "https://images.unsplash.com/photo-1585821569331-f071db2abd8d?w=800&h=600&fit=crop"
   ],
-  createdAt: "2024-01-18T10:00:00Z",
-  winnerBid: {
-    providerId: "p2",
-    providerName: "Ink & Steel Tattoos",
-    amount: 1100,
-    acceptedAt: "2024-01-20",
-    estimatedCompletion: "2024-02-18"
-  }
+  createdAt: "2024-01-18T10:00:00Z"
+  // Temporarily removing winnerBid to test open job functionality
 };
 
 const mockBids: Bid[] = [
   {
     id: "1",
-    bidderName: "Alex Johnson",
+    bidderName: "Sophia's Hair Studio",
+    bidderAvatar: "https://images.unsplash.com/photo-1494790108755-2616b612b4e8?w=100&h=100&fit=crop",
     bidderRating: 4.9,
-    amount: 4800,
+    amount: 1050,
     depositOption: "25_percent",
-    depositAmount: 1200,
-    proposal: "I have 5+ years of experience in React and Node.js development. I can deliver this project within 3 weeks with full responsive design and modern UI/UX. My approach includes thorough testing and documentation.",
+    depositAmount: 262.50,
+    proposal: "I specialize in traditional Japanese tattoo art with over 8 years of experience. I'll create a custom design based on your preferences and complete the sleeve in 3-4 sessions. My portfolio includes many similar projects with excellent healing results.",
     submittedAt: "2024-01-16T09:30:00Z"
   },
   {
     id: "2",
-    bidderName: "Sarah Chen",
+    bidderName: "Zen Massage Therapy",
+    bidderAvatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop",
     bidderRating: 4.8,
-    amount: 5200,
+    amount: 1200,
     depositOption: "custom",
-    depositAmount: 1000,
-    proposal: "Experienced full-stack developer with expertise in e-commerce solutions. I'll use the latest technologies and ensure mobile-first design. Includes 3 months free maintenance.",
+    depositAmount: 300,
+    proposal: "Traditional Japanese artist with 10+ years experience. I use only premium inks and maintain strict hygiene standards. The design will be custom drawn and the sleeve completed over 4 sessions with proper healing time between each.",
     submittedAt: "2024-01-16T14:15:00Z"
+  },
+  {
+    id: "3",
+    bidderName: "Ink & Steel Tattoos",
+    bidderAvatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop",
+    bidderRating: 4.7,
+    amount: 1100,
+    depositOption: "50_percent",
+    depositAmount: 550,
+    proposal: "Award-winning tattoo artist specializing in Japanese traditional style. I'll provide 3 custom design options and complete the work with attention to detail and aftercare guidance. Portfolio available upon request.",
+    submittedAt: "2024-01-17T11:20:00Z"
   }
 ];
 
@@ -285,7 +292,25 @@ export const JobDetailsPage = ({ jobId, onBack }: { jobId: string; onBack: () =>
             ← Back to Jobs
           </Button>
           <div className="flex-1">
-            <h1 className="text-3xl font-bold text-foreground">{mockJob.title}</h1>
+            <div className="flex items-center gap-3 mb-2">
+              <h1 className="text-3xl font-bold text-foreground">{mockJob.title}</h1>
+              <Badge 
+                variant={mockJob.status === 'open' ? 'default' : 
+                        mockJob.status === 'in_progress' ? 'secondary' : 
+                        mockJob.status === 'completed' ? 'outline' : 'destructive'}
+                className={
+                  mockJob.status === 'open' ? 'bg-green-500/20 text-green-300 border-green-500/30' :
+                  mockJob.status === 'in_progress' ? 'bg-blue-500/20 text-blue-300 border-blue-500/30' :
+                  mockJob.status === 'completed' ? 'bg-purple-500/20 text-purple-300 border-purple-500/30' :
+                  'bg-red-500/20 text-red-300 border-red-500/30'
+                }
+              >
+                {mockJob.status === 'open' ? 'Open for Bids' :
+                 mockJob.status === 'in_progress' ? 'In Progress' :
+                 mockJob.status === 'completed' ? 'Completed' : 
+                 mockJob.status.charAt(0).toUpperCase() + mockJob.status.slice(1)}
+              </Badge>
+            </div>
             <div className="flex items-center gap-4 mt-2 text-muted-foreground">
               <Badge variant="secondary">{mockJob.category}</Badge>
               <div className="flex items-center gap-1">
@@ -648,43 +673,101 @@ export const JobDetailsPage = ({ jobId, onBack }: { jobId: string; onBack: () =>
 
         {activeTab === 'bids' && (
           <div className="space-y-4">
-            {mockBids.map((bid) => (
-              <Card key={bid.id} className="hover:shadow-lg transition-shadow">
-                <CardHeader>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold">Current Bids ({mockBids.length})</h3>
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <TrendingUp size={16} />
+                <span>Average bid: ${Math.round(mockBids.reduce((sum, bid) => sum + bid.amount, 0) / mockBids.length).toLocaleString()}</span>
+              </div>
+            </div>
+            
+            {mockBids.map((bid, index) => (
+              <Card key={bid.id} className="hover:shadow-lg transition-all duration-200 border-l-4 border-l-primary/20">
+                <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <Avatar>
-                        <AvatarImage src={bid.bidderAvatar} />
-                        <AvatarFallback>{bid.bidderName.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-                      </Avatar>
+                      <div className="relative">
+                        <Avatar className="w-12 h-12">
+                          <AvatarImage src={bid.bidderAvatar} />
+                          <AvatarFallback>{bid.bidderName.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                        </Avatar>
+                        {index < 2 && <VerifiedBadge size="sm" className="absolute -top-1 -right-1" />}
+                      </div>
                       <div>
-                        <h4 className="font-semibold">{bid.bidderName}</h4>
-                        <div className="flex items-center gap-1">
-                          <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                          <span className="text-sm text-muted-foreground">{bid.bidderRating}</span>
+                        <div className="flex items-center gap-2">
+                          <h4 className="font-semibold">{bid.bidderName}</h4>
+                          {index === 0 && <Badge variant="secondary" className="text-xs">Highest Rated</Badge>}
+                          {index === 2 && <Badge variant="outline" className="text-xs">Best Value</Badge>}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-1">
+                            <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                            <span className="text-sm text-muted-foreground">{bid.bidderRating}</span>
+                          </div>
+                          <span className="text-sm text-muted-foreground">•</span>
+                          <span className="text-sm text-muted-foreground">Submitted {new Date(bid.submittedAt).toLocaleDateString()}</span>
                         </div>
                       </div>
                     </div>
                     <div className="text-right">
                       <p className="text-2xl font-bold text-primary">${bid.amount.toLocaleString()}</p>
-                      <p className="text-sm text-muted-foreground">
-                        Deposit: ${bid.depositAmount.toLocaleString()}
-                      </p>
+                      <div className="flex flex-col text-sm text-muted-foreground">
+                        <span>Deposit: ${bid.depositAmount.toLocaleString()}</span>
+                        <span className="text-xs">({bid.depositOption.replace('_', ' ')})</span>
+                      </div>
                     </div>
                   </div>
                 </CardHeader>
-                <CardContent>
-                  <p className="text-foreground mb-4">{bid.proposal}</p>
-                  <div className="flex items-center justify-between text-sm text-muted-foreground">
-                    <span>Submitted {new Date(bid.submittedAt).toLocaleDateString()}</span>
+                <CardContent className="pt-0">
+                  <p className="text-foreground mb-4 leading-relaxed">{bid.proposal}</p>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                      <div className="flex items-center gap-1">
+                        <Clock size={14} />
+                        <span>2-3 weeks</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <MessageCircle size={14} />
+                        <span>Available for chat</span>
+                      </div>
+                    </div>
                     <div className="flex gap-2">
-                      <Button variant="outline" size="sm">View Profile</Button>
-                      <Button size="sm">Accept Bid</Button>
+                      <Button variant="outline" size="sm" className="flex items-center gap-1">
+                        <User size={14} />
+                        View Profile
+                      </Button>
+                      <Button variant="outline" size="sm" className="flex items-center gap-1">
+                        <MessageCircle size={14} />
+                        Message
+                      </Button>
+                      {!mockJob.winnerBid && (
+                        <Button size="sm" className="bg-green-600 hover:bg-green-700 flex items-center gap-1">
+                          <CheckCircle size={14} />
+                          Accept Bid
+                        </Button>
+                      )}
                     </div>
                   </div>
                 </CardContent>
               </Card>
             ))}
+            
+            {!mockJob.winnerBid && (
+              <Card className="border-dashed border-2 border-primary/30 bg-primary/5">
+                <CardContent className="pt-6 text-center">
+                  <div className="flex flex-col items-center gap-3">
+                    <DollarSign className="w-8 h-8 text-primary" />
+                    <div>
+                      <h4 className="font-semibold mb-1">Ready to place your bid?</h4>
+                      <p className="text-sm text-muted-foreground mb-4">Join the bidding and showcase your expertise</p>
+                      <Button onClick={() => setShowBidForm(true)} className="gradient-primary">
+                        Place Your Bid
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
         )}
 
