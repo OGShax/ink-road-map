@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon, Upload, X, Move, AlertCircle, MapPin, DollarSign, Clock, Save } from "lucide-react";
+import { CalendarIcon, Upload, X, Move, AlertCircle, MapPin, DollarSign, Clock, Save, Info, CreditCard, Shield } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
@@ -425,6 +425,121 @@ export const JobPostingForm = ({ onClose }: { onClose: () => void }) => {
                     )}
                   </div>
                 )}
+
+                {/* Platform Fees & Monetization Explanation */}
+                <Card className="border-blue-500/20 bg-blue-500/5">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="flex items-center gap-2 text-base">
+                      <Info size={18} className="text-blue-600" />
+                      Platform Fees & How We Monetize
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-3">
+                        <div className="flex items-start gap-3">
+                          <CreditCard size={16} className="text-blue-600 mt-1" />
+                          <div>
+                            <h4 className="font-medium text-sm">Service Fee</h4>
+                            <p className="text-xs text-muted-foreground">
+                              We charge a 5% service fee on completed projects, split between client and provider (2.5% each)
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-start gap-3">
+                          <Shield size={16} className="text-blue-600 mt-1" />
+                          <div>
+                            <h4 className="font-medium text-sm">Payment Protection</h4>
+                            <p className="text-xs text-muted-foreground">
+                              Secure escrow system protects both parties. Funds released upon project completion
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="space-y-3">
+                        <div className="flex items-start gap-3">
+                          <DollarSign size={16} className="text-blue-600 mt-1" />
+                          <div>
+                            <h4 className="font-medium text-sm">Processing Fee</h4>
+                            <p className="text-xs text-muted-foreground">
+                              Standard payment processing fee of 2.9% + $0.30 per transaction
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-start gap-3">
+                          <Clock size={16} className="text-blue-600 mt-1" />
+                          <div>
+                            <h4 className="font-medium text-sm">No Upfront Costs</h4>
+                            <p className="text-xs text-muted-foreground">
+                              Free to post jobs. Fees only apply when you successfully hire a provider
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg">
+                      <h5 className="font-medium text-sm text-blue-800 dark:text-blue-300 mb-2">Example Fee Breakdown</h5>
+                      <div className="text-xs text-blue-700 dark:text-blue-400 space-y-1">
+                        <div className="flex justify-between">
+                          <span>Project Value:</span>
+                          <span className="font-medium">
+                            {formData.paymentType === "fixed" && formData.fixedPrice 
+                              ? `$${formData.fixedPrice.toLocaleString()}`
+                              : formData.paymentType === "hourly" && formData.hourlyRate
+                              ? `$${formData.hourlyRate}/hour × estimated hours`
+                              : "$1,000 (example)"
+                            }
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Your Service Fee (2.5%):</span>
+                          <span className="font-medium">
+                            {formData.paymentType === "fixed" && formData.fixedPrice 
+                              ? `$${(formData.fixedPrice * 0.025).toFixed(2)}`
+                              : "$25"
+                            }
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Provider Service Fee (2.5%):</span>
+                          <span className="font-medium">
+                            {formData.paymentType === "fixed" && formData.fixedPrice 
+                              ? `$${(formData.fixedPrice * 0.025).toFixed(2)}`
+                              : "$25"
+                            }
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Payment Processing:</span>
+                          <span className="font-medium">
+                            {formData.paymentType === "fixed" && formData.fixedPrice 
+                              ? `$${(formData.fixedPrice * 0.029 + 0.30).toFixed(2)}`
+                              : "$29.30"
+                            }
+                          </span>
+                        </div>
+                        <div className="border-t border-blue-200 dark:border-blue-700 pt-1 mt-2">
+                          <div className="flex justify-between font-medium">
+                            <span>Total Platform Fees:</span>
+                            <span>
+                              {formData.paymentType === "fixed" && formData.fixedPrice 
+                                ? `$${(formData.fixedPrice * 0.079 + 0.30).toFixed(2)}`
+                                : "$79.30"
+                              }
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="text-xs text-muted-foreground">
+                      <strong>Note:</strong> Fees are only charged upon successful project completion. 
+                      Job posting and browsing proposals are completely free. This model ensures we're aligned 
+                      with your success - we only succeed when you do.
+                    </div>
+                  </CardContent>
+                </Card>
 
                 <div>
                   <Label>Budget Range (Optional)</Label>
