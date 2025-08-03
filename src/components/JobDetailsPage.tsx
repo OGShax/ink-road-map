@@ -373,7 +373,7 @@ export const JobDetailsPage = ({ jobId, onBack }: { jobId: string; onBack: () =>
               <Star size={16} className={isFollowing ? "fill-current" : ""} />
               {isFollowing ? "Following" : "Follow"}
             </Button>
-            {mockJob.status === 'open' && (
+            {!mockJob.winnerBid && (
               <Button onClick={() => setShowBidForm(true)} className="gradient-primary">
                 Place Bid
               </Button>
@@ -382,7 +382,7 @@ export const JobDetailsPage = ({ jobId, onBack }: { jobId: string; onBack: () =>
         </div>
 
         {/* Conditional Countdown Timer or Winner Information */}
-        {mockJob.status === 'open' ? (
+        {!mockJob.winnerBid ? (
           <Card className="mb-6 border-orange-500/20 bg-gradient-to-r from-orange-500/10 to-red-500/10">
             <CardContent className="pt-6">
               <div className="flex items-center justify-center gap-4">
@@ -413,7 +413,7 @@ export const JobDetailsPage = ({ jobId, onBack }: { jobId: string; onBack: () =>
               </div>
             </CardContent>
           </Card>
-        ) : mockJob.winnerBid ? (
+        ) : mockJob.winnerBid && (
           <Card className="mb-6 border-green-500/20 bg-gradient-to-r from-green-500/10 to-blue-500/10">
             <CardContent className="pt-6">
               <div className="flex items-center justify-center gap-6 mb-6">
@@ -481,7 +481,7 @@ export const JobDetailsPage = ({ jobId, onBack }: { jobId: string; onBack: () =>
               </div>
             </CardContent>
           </Card>
-        ) : null}
+        )}
 
         {/* Job Images & Details */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
