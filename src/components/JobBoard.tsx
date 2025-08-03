@@ -584,7 +584,11 @@ export const JobBoard = () => {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {popularProviders.map((provider) => (
-                <Card key={provider.id} className="group hover:shadow-lg transition-all duration-300 hover:scale-105 cursor-pointer">
+                <Card 
+                  key={provider.id} 
+                  className="group hover:shadow-lg transition-all duration-300 hover:scale-105 cursor-pointer"
+                  onClick={() => navigate(`/provider/${provider.id}`)}
+                >
                   <CardContent className="p-4">
                     <div className="flex flex-col items-center text-center space-y-3">
                       <div className="relative">
