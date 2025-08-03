@@ -136,7 +136,9 @@ export const JobDetailsPage = ({ jobId, onBack }: { jobId: string; onBack: () =>
     hourlyRate: "",
     depositOption: "25_percent",
     customDepositPercentage: "",
-    proposal: ""
+    proposal: "",
+    paymentType: "fixed", // 'fixed' or 'hourly'
+    includeMva: false
   });
   const { toast } = useToast();
 
@@ -572,24 +574,84 @@ export const JobDetailsPage = ({ jobId, onBack }: { jobId: string; onBack: () =>
               <CardHeader>
                 <CardTitle>Place Your Bid</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-6">
+               <CardContent className="space-y-6">
+                {/* Payment Type Selection */}
                 <div>
-                  <Label htmlFor="bidAmount">Bid Amount</Label>
-                  <div className="relative">
-                    <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={16} />
-                    <Input
-                      id="bidAmount"
-                      type="number"
-                      placeholder="0.00"
-                      className="pl-10"
-                      value={bidData.amount}
-                      onChange={(e) => setBidData(prev => ({...prev, amount: e.target.value}))}
-                    />
-                  </div>
+                  <Label>Payment Type</Label>
+                  <Select
+                    value={bidData.paymentType}
+                    onValueChange={(value) => setBidData(prev => ({...prev, paymentType: value}))}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="fixed">Fixed Project Price</SelectItem>
+                      <SelectItem value="hourly">Hourly Rate</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
 
+                {/* Amount/Rate Input */}
+                {bidData.paymentType === 'fixed' ? (
+                  <div>
+                    <Label htmlFor="bidAmount">Total Project Amount</Label>
+                    <div className="relative">
+                      <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={16} />
+                      <Input
+                        id="bidAmount"
+                        type="number"
+                        placeholder="0.00"
+                        className="pl-10"
+                        value={bidData.amount}
+                        onChange={(e) => setBidData(prev => ({...prev, amount: e.target.value}))}
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="hourlyRate">Hourly Rate</Label>
+                      <div className="relative">
+                        <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={16} />
+                        <Input
+                          id="hourlyRate"
+                          type="number"
+                          placeholder="0.00"
+                          className="pl-10"
+                          value={bidData.hourlyRate}
+                          onChange={(e) => setBidData(prev => ({...prev, hourlyRate: e.target.value}))}
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <Label htmlFor="estimatedHours">Estimated Hours</Label>
+                      <Input
+                        id="estimatedHours"
+                        type="number"
+                        placeholder="40"
+                        value={bidData.estimatedHours}
+                        onChange={(e) => setBidData(prev => ({...prev, estimatedHours: e.target.value}))}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* MVA Option */}
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="includeMva"
+                    checked={bidData.includeMva}
+                    onCheckedChange={(checked) => setBidData(prev => ({...prev, includeMva: checked}))}
+                  />
+                  <Label htmlFor="includeMva" className="text-sm font-medium">
+                    Include MVA (Norwegian VAT - 25%)
+                  </Label>
+                </div>
+
+                {/* Deposit Requirement */}
                 <div>
-                  <Label>Deposit Option</Label>
+                  <Label>Deposit Requirement</Label>
                   <Select
                     value={bidData.depositOption}
                     onValueChange={(value) => setBidData(prev => ({...prev, depositOption: value}))}
@@ -598,11 +660,14 @@ export const JobDetailsPage = ({ jobId, onBack }: { jobId: string; onBack: () =>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="25_percent">25% Deposit</SelectItem>
-                      <SelectItem value="custom">Custom Percentage</SelectItem>
-                      <SelectItem value="full_payment">Full Payment</SelectItem>
+                      <SelectItem value="25_percent">25% Deposit Required</SelectItem>
+                      <SelectItem value="custom">Custom Deposit Percentage</SelectItem>
+                      <SelectItem value="no_deposit">No Deposit Required</SelectItem>
                     </SelectContent>
                   </Select>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Deposit helps secure the project and shows commitment from both parties
+                  </p>
                 </div>
 
                 {bidData.depositOption === 'custom' && (
@@ -612,9 +677,76 @@ export const JobDetailsPage = ({ jobId, onBack }: { jobId: string; onBack: () =>
                       id="customDeposit"
                       type="number"
                       placeholder="50"
+                      min="10"
+                      max="75"
                       value={bidData.customDepositPercentage}
                       onChange={(e) => setBidData(prev => ({...prev, customDepositPercentage: e.target.value}))}
                     />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Recommended range: 10-75%
+                    </p>
+                  </div>
+                )}
+
+                {/* Total Summary */}
+                {(bidData.amount || (bidData.hourlyRate && bidData.estimatedHours)) && (
+                  <div className="bg-muted/50 p-4 rounded-lg space-y-2">
+                    <h4 className="font-semibold">Bid Summary</h4>
+                    {bidData.paymentType === 'fixed' ? (
+                      <div className="space-y-1">
+                        <div className="flex justify-between">
+                          <span>Project Amount:</span>
+                          <span>${Number(bidData.amount || 0).toLocaleString()}</span>
+                        </div>
+                        {bidData.includeMva && (
+                          <div className="flex justify-between text-sm text-muted-foreground">
+                            <span>+ MVA (25%):</span>
+                            <span>${(Number(bidData.amount || 0) * 0.25).toLocaleString()}</span>
+                          </div>
+                        )}
+                        <div className="flex justify-between font-semibold border-t pt-1">
+                          <span>Total Amount:</span>
+                          <span>${(Number(bidData.amount || 0) * (bidData.includeMva ? 1.25 : 1)).toLocaleString()}</span>
+                        </div>
+                        {bidData.depositOption === '25_percent' && (
+                          <div className="flex justify-between text-sm text-muted-foreground">
+                            <span>Required Deposit (25%):</span>
+                            <span>${(Number(bidData.amount || 0) * (bidData.includeMva ? 1.25 : 1) * 0.25).toLocaleString()}</span>
+                          </div>
+                        )}
+                        {bidData.depositOption === 'custom' && bidData.customDepositPercentage && (
+                          <div className="flex justify-between text-sm text-muted-foreground">
+                            <span>Required Deposit ({bidData.customDepositPercentage}%):</span>
+                            <span>${(Number(bidData.amount || 0) * (bidData.includeMva ? 1.25 : 1) * (Number(bidData.customDepositPercentage) / 100)).toLocaleString()}</span>
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="space-y-1">
+                        <div className="flex justify-between">
+                          <span>Hourly Rate:</span>
+                          <span>${Number(bidData.hourlyRate || 0).toLocaleString()}/hour</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Estimated Hours:</span>
+                          <span>{bidData.estimatedHours} hours</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Estimated Total:</span>
+                          <span>${(Number(bidData.hourlyRate || 0) * Number(bidData.estimatedHours || 0)).toLocaleString()}</span>
+                        </div>
+                        {bidData.includeMva && (
+                          <div className="flex justify-between text-sm text-muted-foreground">
+                            <span>+ MVA (25%):</span>
+                            <span>${(Number(bidData.hourlyRate || 0) * Number(bidData.estimatedHours || 0) * 0.25).toLocaleString()}</span>
+                          </div>
+                        )}
+                        <div className="flex justify-between font-semibold border-t pt-1">
+                          <span>Total Estimated:</span>
+                          <span>${(Number(bidData.hourlyRate || 0) * Number(bidData.estimatedHours || 0) * (bidData.includeMva ? 1.25 : 1)).toLocaleString()}</span>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
 
