@@ -531,10 +531,398 @@ export const JobPostingForm = ({ onClose }: { onClose: () => void }) => {
               </div>
             )}
 
-            {/* Additional steps would continue here... */}
-            {currentStep > 2 && (
-              <div className="text-center py-12">
-                <p className="text-muted-foreground">Step {currentStep} content coming soon...</p>
+            {/* Step 3: Timeline */}
+            {currentStep === 3 && (
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <Label className="flex items-center gap-2">
+                      <CalendarIcon className="mr-1" size={16} />
+                      Bidding Start Date
+                      <span className="text-destructive">*</span>
+                    </Label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            "w-full justify-start text-left font-normal",
+                            !formData.biddingStartDate && "text-muted-foreground",
+                            errors.biddingStartDate && "border-destructive"
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {formData.biddingStartDate ? format(formData.biddingStartDate, "PPP") : "Pick a date"}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0 bg-popover z-50" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={formData.biddingStartDate}
+                          onSelect={(date) => updateFormData("biddingStartDate", date)}
+                          disabled={(date) => date < new Date()}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    {errors.biddingStartDate && (
+                      <p className="text-sm text-destructive flex items-center gap-1 mt-1">
+                        <AlertCircle size={14} />
+                        {errors.biddingStartDate}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <Label className="flex items-center gap-2">
+                      <CalendarIcon className="mr-1" size={16} />
+                      Bidding End Date
+                      <span className="text-destructive">*</span>
+                    </Label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            "w-full justify-start text-left font-normal",
+                            !formData.biddingEndDate && "text-muted-foreground",
+                            errors.biddingEndDate && "border-destructive"
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {formData.biddingEndDate ? format(formData.biddingEndDate, "PPP") : "Pick a date"}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0 bg-popover z-50" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={formData.biddingEndDate}
+                          onSelect={(date) => updateFormData("biddingEndDate", date)}
+                          disabled={(date) => date < new Date() || (formData.biddingStartDate && date <= formData.biddingStartDate)}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    {errors.biddingEndDate && (
+                      <p className="text-sm text-destructive flex items-center gap-1 mt-1">
+                        <AlertCircle size={14} />
+                        {errors.biddingEndDate}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="bg-muted/50 p-4 rounded-lg">
+                  <h3 className="font-medium mb-2">Recommended Bidding Duration</h3>
+                  <ul className="text-sm text-muted-foreground space-y-1">
+                    <li>• Small projects (under $1,000): 3-5 days</li>
+                    <li>• Medium projects ($1,000-$5,000): 5-7 days</li>
+                    <li>• Large projects (over $5,000): 7-14 days</li>
+                  </ul>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <Label className="flex items-center gap-2">
+                      <CalendarIcon className="mr-1" size={16} />
+                      Project Start Date (Optional)
+                    </Label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            "w-full justify-start text-left font-normal",
+                            !formData.projectStartDate && "text-muted-foreground"
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {formData.projectStartDate ? format(formData.projectStartDate, "PPP") : "Pick a date"}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0 bg-popover z-50" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={formData.projectStartDate}
+                          onSelect={(date) => updateFormData("projectStartDate", date)}
+                          disabled={(date) => date < new Date()}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      When do you want the project to begin?
+                    </p>
+                  </div>
+
+                  <div>
+                    <Label className="flex items-center gap-2">
+                      <CalendarIcon className="mr-1" size={16} />
+                      Project End Date (Optional)
+                    </Label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            "w-full justify-start text-left font-normal",
+                            !formData.projectEndDate && "text-muted-foreground"
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {formData.projectEndDate ? format(formData.projectEndDate, "PPP") : "Pick a date"}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0 bg-popover z-50" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={formData.projectEndDate}
+                          onSelect={(date) => updateFormData("projectEndDate", date)}
+                          disabled={(date) => 
+                            date < new Date() || 
+                            (formData.projectStartDate && date <= formData.projectStartDate)
+                          }
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Expected completion date
+                    </p>
+                  </div>
+                </div>
+
+                <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
+                  <div className="flex items-start gap-3">
+                    <AlertCircle className="text-blue-600 dark:text-blue-400 mt-0.5" size={16} />
+                    <div>
+                      <h4 className="font-medium text-blue-800 dark:text-blue-300 mb-1">Timeline Tips</h4>
+                      <ul className="text-sm text-blue-700 dark:text-blue-400 space-y-1">
+                        <li>• Allow enough time for quality bids to come in</li>
+                        <li>• Consider time zones if working with global talent</li>
+                        <li>• Buffer time for revisions and feedback</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Step 4: Media & Guidelines */}
+            {currentStep === 4 && (
+              <div className="space-y-6">
+                <div>
+                  <Label className="flex items-center gap-2 mb-4">
+                    <Upload size={16} />
+                    Project Images (Optional)
+                  </Label>
+                  <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center">
+                    <Upload className="mx-auto h-12 w-12 text-muted-foreground/50 mb-4" />
+                    <div className="space-y-2">
+                      <p className="text-lg font-medium">Upload project images</p>
+                      <p className="text-sm text-muted-foreground">
+                        Add images, mockups, or reference materials to help bidders understand your vision
+                      </p>
+                      <Button variant="outline" className="mt-4">
+                        Choose Files
+                      </Button>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-4">
+                      Supported formats: JPG, PNG, GIF (max 10MB each, up to 10 images)
+                    </p>
+                  </div>
+
+                  {formData.imageUrls.length > 0 && (
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+                      {formData.imageUrls.map((url, index) => (
+                        <div key={index} className="relative group">
+                          <img
+                            src={url}
+                            alt={`Upload ${index + 1}`}
+                            className="w-full h-24 object-cover rounded-lg"
+                          />
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                            onClick={() => {
+                              const newUrls = formData.imageUrls.filter((_, i) => i !== index);
+                              updateFormData("imageUrls", newUrls);
+                            }}
+                          >
+                            <X size={14} />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div>
+                  <Label htmlFor="guidelines" className="flex items-center gap-2">
+                    Additional Guidelines & Requirements
+                  </Label>
+                  <Textarea
+                    id="guidelines"
+                    placeholder="Any specific requirements, preferred technologies, communication preferences, or additional details that bidders should know..."
+                    rows={8}
+                    value={formData.guidelines}
+                    onChange={(e) => updateFormData("guidelines", e.target.value)}
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Include any special requirements, preferred tools, or working style preferences
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <Card className="p-4">
+                    <h4 className="font-medium mb-2">What to Include</h4>
+                    <ul className="text-sm text-muted-foreground space-y-1">
+                      <li>• Technical requirements</li>
+                      <li>• Preferred technologies</li>
+                      <li>• Communication preferences</li>
+                      <li>• Deliverable formats</li>
+                      <li>• Quality standards</li>
+                    </ul>
+                  </Card>
+
+                  <Card className="p-4">
+                    <h4 className="font-medium mb-2">Avoid Including</h4>
+                    <ul className="text-sm text-muted-foreground space-y-1">
+                      <li>• Personal contact information</li>
+                      <li>• Extremely detailed specifications</li>
+                      <li>• Unrealistic expectations</li>
+                      <li>• Overly restrictive requirements</li>
+                      <li>• Biased language</li>
+                    </ul>
+                  </Card>
+                </div>
+              </div>
+            )}
+
+            {/* Step 5: Review */}
+            {currentStep === 5 && (
+              <div className="space-y-6">
+                <div className="bg-gradient-to-r from-primary/10 to-accent/10 p-6 rounded-lg">
+                  <h3 className="text-xl font-bold mb-2">Review Your Job Posting</h3>
+                  <p className="text-muted-foreground">
+                    Please review all details before publishing. You can edit your job after posting if needed.
+                  </p>
+                </div>
+
+                {/* Job Summary */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">{formData.title || "Untitled Job"}</CardTitle>
+                    <div className="flex flex-wrap gap-2">
+                      <Badge variant="secondary">{formData.category || "No category"}</Badge>
+                      <Badge variant="outline">{formData.paymentType === "fixed" ? "Fixed Price" : "Hourly Rate"}</Badge>
+                      <Badge variant="outline" className={
+                        formData.urgencyLevel === "asap" ? "border-red-500 text-red-500" :
+                        formData.urgencyLevel === "within_week" ? "border-yellow-500 text-yellow-500" :
+                        "border-green-500 text-green-500"
+                      }>
+                        {formData.urgencyLevel === "asap" ? "Urgent" :
+                         formData.urgencyLevel === "within_week" ? "Within a week" : "Flexible"}
+                      </Badge>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <h4 className="font-medium mb-2">Description</h4>
+                      <p className="text-muted-foreground whitespace-pre-wrap">
+                        {formData.description || "No description provided"}
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <h4 className="font-medium mb-2">Location</h4>
+                        <p className="text-muted-foreground flex items-center gap-1">
+                          <MapPin size={14} />
+                          {formData.address || "No location specified"}
+                        </p>
+                      </div>
+
+                      <div>
+                        <h4 className="font-medium mb-2">Budget</h4>
+                        <p className="text-muted-foreground flex items-center gap-1">
+                          <DollarSign size={14} />
+                          {formData.paymentType === "fixed" 
+                            ? `$${formData.fixedPrice?.toLocaleString() || "0"} (Fixed)`
+                            : `$${formData.hourlyRate || "0"}/hour × ${formData.approximateHours || "0"} hours`
+                          }
+                        </p>
+                        {formData.budgetMax && (
+                          <p className="text-xs text-muted-foreground">Max budget: ${formData.budgetMax.toLocaleString()}</p>
+                        )}
+                      </div>
+                    </div>
+
+                    {(formData.biddingStartDate || formData.biddingEndDate) && (
+                      <div>
+                        <h4 className="font-medium mb-2">Timeline</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-muted-foreground">
+                          {formData.biddingStartDate && (
+                            <p>Bidding starts: {format(formData.biddingStartDate, "PPP")}</p>
+                          )}
+                          {formData.biddingEndDate && (
+                            <p>Bidding ends: {format(formData.biddingEndDate, "PPP")}</p>
+                          )}
+                          {formData.projectStartDate && (
+                            <p>Project starts: {format(formData.projectStartDate, "PPP")}</p>
+                          )}
+                          {formData.projectEndDate && (
+                            <p>Project due: {format(formData.projectEndDate, "PPP")}</p>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      <div className="text-center p-3 bg-muted/50 rounded-lg">
+                        <p className="text-xs text-muted-foreground">Materials</p>
+                        <p className="font-medium">{formData.materialsProvided ? "Provided" : "Not provided"}</p>
+                      </div>
+                      <div className="text-center p-3 bg-muted/50 rounded-lg">
+                        <p className="text-xs text-muted-foreground">MVA</p>
+                        <p className="font-medium">{formData.mvaEnabled ? "Enabled" : "Disabled"}</p>
+                      </div>
+                      <div className="text-center p-3 bg-muted/50 rounded-lg">
+                        <p className="text-xs text-muted-foreground">Images</p>
+                        <p className="font-medium">{formData.imageUrls.length} uploaded</p>
+                      </div>
+                      <div className="text-center p-3 bg-muted/50 rounded-lg">
+                        <p className="text-xs text-muted-foreground">Guidelines</p>
+                        <p className="font-medium">{formData.guidelines ? "Provided" : "None"}</p>
+                      </div>
+                    </div>
+
+                    {formData.guidelines && (
+                      <div>
+                        <h4 className="font-medium mb-2">Additional Guidelines</h4>
+                        <p className="text-muted-foreground whitespace-pre-wrap text-sm">
+                          {formData.guidelines}
+                        </p>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+
+                <Card className="border-green-500/20 bg-green-500/5">
+                  <CardContent className="pt-6">
+                    <div className="flex items-start gap-3">
+                      <AlertCircle className="text-green-600 dark:text-green-400 mt-0.5" size={16} />
+                      <div>
+                        <h4 className="font-medium text-green-800 dark:text-green-300 mb-1">Ready to Publish</h4>
+                        <p className="text-sm text-green-700 dark:text-green-400">
+                          Your job posting looks complete! Once published, it will be visible to our community of professionals. 
+                          You can edit details or close the posting at any time from your dashboard.
+                        </p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
             )}
           </CardContent>
