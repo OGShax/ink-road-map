@@ -68,27 +68,102 @@ interface QAItem {
   isAnswer: boolean;
 }
 
-const mockJob: Job = {
-  id: "2", // Using job 2 which has winnerBid in JobBoard
-  title: "Custom Tattoo Design & Application",
-  description: "Looking for skilled tattoo artist to create and apply a custom sleeve design. Traditional Japanese style preferred. Must provide portfolio of similar work.",
-  category: "Tattoo Studio",
-  address: "San Francisco, CA",
-  paymentType: "fixed",
-  fixedPrice: 1200,
-  budgetMax: 1500,
-  urgencyLevel: "within_week",
-  materialsProvided: false,
-  biddingEndDate: "2024-02-20T18:00:00Z",
-  status: "open", // Change to open to test bid functionality
-  imageUrls: [
-    "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&h=600&fit=crop",
-    "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=600&fit=crop",
-    "https://images.unsplash.com/photo-1585821569331-f071db2abd8d?w=800&h=600&fit=crop"
-  ],
-  createdAt: "2024-01-18T10:00:00Z"
-  // Temporarily removing winnerBid to test open job functionality
+const getJobData = (jobId: string) => {
+  const jobsData = [
+    {
+      id: "1",
+      title: "Professional Hair Styling & Color Treatment",
+      description: "Experienced hair stylist needed for wedding preparation. Includes bridal party of 6 people. Must have experience with formal updos, hair extensions, and color touch-ups.",
+      category: "Hair Studio",
+      address: "New York, NY",
+      paymentType: "fixed" as const,
+      fixedPrice: 850,
+      budgetMax: 1000,
+      urgencyLevel: "within_week",
+      materialsProvided: false,
+      biddingEndDate: "2024-02-15T18:00:00Z",
+      status: "open",
+      imageUrls: [
+        "https://images.unsplash.com/photo-1522336572468-97b06e8ef143?w=800&h=600&fit=crop",
+        "https://images.unsplash.com/photo-1559599101-f09722fb4948?w=800&h=600&fit=crop"
+      ],
+      createdAt: "2024-01-15T10:00:00Z"
+    },
+    {
+      id: "2",
+      title: "Custom Tattoo Design & Application",
+      description: "Looking for skilled tattoo artist to create and apply a custom sleeve design. Traditional Japanese style preferred. Must provide portfolio of similar work.",
+      category: "Tattoo Studio",
+      address: "San Francisco, CA",
+      paymentType: "fixed" as const,
+      fixedPrice: 1200,
+      budgetMax: 1500,
+      urgencyLevel: "within_week",
+      materialsProvided: false,
+      biddingEndDate: "2024-02-20T18:00:00Z",
+      status: "in_progress",
+      imageUrls: [
+        "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&h=600&fit=crop",
+        "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=600&fit=crop"
+      ],
+      createdAt: "2024-01-18T10:00:00Z",
+      winnerBid: {
+        providerId: "p2",
+        providerName: "Ink & Steel Tattoos",
+        amount: 1100,
+        acceptedAt: "2024-01-20",
+        estimatedCompletion: "2024-02-18"
+      }
+    },
+    {
+      id: "3",
+      title: "Deep Tissue Massage Therapy",
+      description: "Need licensed massage therapist for weekly sessions. Must specialize in deep tissue and sports massage. Location flexible - can travel to client.",
+      category: "Massage Therapy",
+      address: "Los Angeles, CA",
+      paymentType: "hourly" as const,
+      hourlyRate: 75,
+      budgetMax: 300,
+      urgencyLevel: "flexible",
+      materialsProvided: true,
+      biddingEndDate: "2024-03-01T18:00:00Z",
+      status: "open",
+      imageUrls: [
+        "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=800&h=600&fit=crop"
+      ],
+      createdAt: "2024-01-20T10:00:00Z"
+    },
+    {
+      id: "4",
+      title: "Acrylic Nail Art & Manicure",
+      description: "Professional nail technician needed for special event preparation. Includes nail art, French manicure, and pedicure services for 8 people.",
+      category: "Nail Tech",
+      address: "Miami, FL",
+      paymentType: "fixed" as const,
+      fixedPrice: 480,
+      budgetMax: 600,
+      urgencyLevel: "asap",
+      materialsProvided: false,
+      biddingEndDate: "2024-02-10T18:00:00Z",
+      status: "completed",
+      imageUrls: [
+        "https://images.unsplash.com/photo-1604654894610-df63bc536371?w=800&h=600&fit=crop"
+      ],
+      createdAt: "2024-01-12T10:00:00Z",
+      winnerBid: {
+        providerId: "p4",
+        providerName: "Elite Nail Artistry",
+        amount: 450,
+        acceptedAt: "2024-01-14",
+        completedAt: "2024-02-08"
+      }
+    }
+  ];
+  
+  return jobsData.find(job => job.id === jobId) || jobsData[0];
 };
+
+const mockJob = getJobData("1"); // Default to job 1 for demo
 
 const mockBids: Bid[] = [
   {
@@ -157,6 +232,9 @@ export const JobDetailsPage = ({ jobId, onBack }: { jobId: string; onBack: () =>
   const [newQuestion, setNewQuestion] = useState("");
   const [timeLeft, setTimeLeft] = useState("");
   const [showShareDialog, setShowShareDialog] = useState(false);
+
+  // Get job data based on jobId
+  const mockJob = getJobData(jobId);
   const [bidData, setBidData] = useState({
     amount: "",
     estimatedHours: "",
@@ -164,7 +242,7 @@ export const JobDetailsPage = ({ jobId, onBack }: { jobId: string; onBack: () =>
     depositOption: "25_percent",
     customDepositPercentage: "",
     proposal: "",
-    paymentType: "fixed", // 'fixed' or 'hourly'
+    paymentType: mockJob.paymentType,
     includeMva: false
   });
   const { toast } = useToast();
@@ -637,35 +715,46 @@ export const JobDetailsPage = ({ jobId, onBack }: { jobId: string; onBack: () =>
             <CardContent>
               <div className="space-y-6">
                 <div>
+                  <h4 className="font-semibold mb-3 text-lg">Project Details:</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <DollarSign className="w-4 h-4 text-muted-foreground" />
+                        <span className="text-sm font-medium">Budget:</span>
+                      </div>
+                      <p className="text-lg font-bold text-primary">
+                        {mockJob.paymentType === "fixed" 
+                          ? `$${mockJob.fixedPrice?.toLocaleString() || "0"} (Fixed)`
+                          : `$${mockJob.hourlyRate || "0"}/hour`
+                        }
+                      </p>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <Clock className="w-4 h-4 text-muted-foreground" />
+                        <span className="text-sm font-medium">Urgency:</span>
+                      </div>
+                      <Badge className={getUrgencyColor(mockJob.urgencyLevel)}>
+                        {mockJob.urgencyLevel === "asap" ? "ASAP" :
+                         mockJob.urgencyLevel === "within_week" ? "Within a week" :
+                         "Flexible timeline"}
+                      </Badge>
+                    </div>
+                  </div>
+                </div>
+                <div>
                   <h4 className="font-semibold mb-3 text-lg">What needs to be done:</h4>
-                  <ul className="list-disc list-inside space-y-2 text-muted-foreground">
-                    <li>Paint living room (approx. 400 sq ft) - walls and ceiling</li>
-                    <li>Paint kitchen (approx. 300 sq ft) - walls only</li>
-                    <li>Prep work including light sanding and hole filling</li>
-                    <li>Remove switch plates and outlet covers</li>
-                    <li>Protect floors and furniture with drop cloths</li>
-                    <li>Clean up after job completion</li>
-                  </ul>
+                  <p className="text-muted-foreground leading-relaxed">{mockJob.description}</p>
                 </div>
-                <div>
-                  <h4 className="font-semibold mb-3 text-lg">Paint Preferences:</h4>
-                  <ul className="list-disc list-inside space-y-2 text-muted-foreground">
-                    <li>Living room: Warm neutral color (beige/cream family)</li>
-                    <li>Kitchen: Light, fresh color (white or very light gray)</li>
-                    <li>High-quality paint preferred (Sherwin Williams or Benjamin Moore)</li>
-                    <li>Eggshell or satin finish for durability</li>
-                  </ul>
-                </div>
-                <div>
-                  <h4 className="font-semibold mb-3 text-lg">Requirements:</h4>
-                  <ul className="list-disc list-inside space-y-2 text-muted-foreground">
-                    <li>Licensed and insured painter</li>
-                    <li>Minimum 3 years of residential painting experience</li>
-                    <li>References from recent customers</li>
-                    <li>Must provide own tools and equipment</li>
-                    <li>Available to start within 1-2 weeks</li>
-                  </ul>
-                </div>
+                {mockJob.materialsProvided && (
+                  <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
+                    <div className="flex items-center gap-2 mb-2">
+                      <CheckCircle className="w-5 h-5 text-green-500" />
+                      <span className="font-medium text-green-700">Materials Provided</span>
+                    </div>
+                    <p className="text-sm text-green-600">All necessary materials and tools will be provided by the client.</p>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -885,7 +974,7 @@ export const JobDetailsPage = ({ jobId, onBack }: { jobId: string; onBack: () =>
                   <Label>Payment Type</Label>
                   <Select
                     value={bidData.paymentType}
-                    onValueChange={(value) => setBidData(prev => ({...prev, paymentType: value}))}
+                    onValueChange={(value: "fixed" | "hourly") => setBidData(prev => ({...prev, paymentType: value}))}
                   >
                     <SelectTrigger>
                       <SelectValue />

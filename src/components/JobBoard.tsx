@@ -272,6 +272,53 @@ export const JobBoard = () => {
           </Button>
         </div>
 
+        {/* Demo Job Status Examples */}
+        <Card className="mb-8 border-blue-500/20 bg-gradient-to-r from-blue-500/10 to-purple-500/10">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <HelpCircle className="w-5 h-5" />
+              Demo: Different Job Statuses
+            </CardTitle>
+            <p className="text-sm text-muted-foreground">Click these buttons to see how jobs appear in different states</p>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-wrap gap-3">
+              <Button
+                variant="outline"
+                onClick={() => handleViewJob("1")}
+                className="flex items-center gap-2 hover:bg-green-500/10 border-green-500/30"
+              >
+                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                Open Job (Hair Styling)
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => handleViewJob("2")}
+                className="flex items-center gap-2 hover:bg-blue-500/10 border-blue-500/30"
+              >
+                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                In Progress (Tattoo)
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => handleViewJob("3")}
+                className="flex items-center gap-2 hover:bg-green-500/10 border-green-500/30"
+              >
+                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                Open Job (Massage)
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => handleViewJob("4")}
+                className="flex items-center gap-2 hover:bg-purple-500/10 border-purple-500/30"
+              >
+                <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                Completed (Nails)
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {stats.map((stat) => (
