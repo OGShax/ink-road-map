@@ -332,131 +332,206 @@ export const JobBoard = () => {
           ))}
         </div>
 
-        {/* Platform Usage - Full Power Section */}
+        {/* How to Use Our Platform Section */}
         <div className="mb-12">
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-primary mb-4">Unlock Your Platform's Full Power</h2>
+            <h2 className="text-3xl font-bold text-primary mb-4">Find the Perfect Professionals for Your Home Projects</h2>
             <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-              Discover how professionals leverage our comprehensive tools to transform their workflow and accelerate success
+              From DIY guidance to complete renovations, connect with skilled professionals who bring your vision to life
             </p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <Card className="overflow-hidden hover:shadow-lg transition-shadow">
+            <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 hover:scale-105">
               <div className="aspect-video relative overflow-hidden">
                 <img 
-                  src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=400&h=250&fit=crop" 
-                  alt="Technical Development" 
+                  src="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=400&h=250&fit=crop" 
+                  alt="Easy Project Management" 
                   className="w-full h-full object-cover"
                 />
               </div>
               <CardContent className="p-6">
-                <h3 className="text-xl font-semibold mb-3">Advanced Development Tools</h3>
-                <p className="text-muted-foreground">
-                  Access cutting-edge development environments and technical depth that powers enterprise-level projects
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="overflow-hidden hover:shadow-lg transition-shadow">
-              <div className="aspect-video relative overflow-hidden">
-                <img 
-                  src="https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?w=400&h=250&fit=crop" 
-                  alt="Dynamic Coding" 
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <CardContent className="p-6">
-                <h3 className="text-xl font-semibold mb-3">Creative & Dynamic Solutions</h3>
-                <p className="text-muted-foreground">
-                  Harness colorful and creative coding approaches that bring innovative solutions to complex challenges
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="overflow-hidden hover:shadow-lg transition-shadow">
-              <div className="aspect-video relative overflow-hidden">
-                <img 
-                  src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=400&h=250&fit=crop" 
-                  alt="Team Collaboration" 
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <CardContent className="p-6">
-                <h3 className="text-xl font-semibold mb-3">Collaborative Excellence</h3>
-                <p className="text-muted-foreground">
-                  Foster teamwork and collaboration in tech-savvy environments that drive collective success
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-
-        {/* Provider Benefits Section */}
-        <div className="mb-12">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-primary mb-4">Provider Benefits & Growth</h2>
-            <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-              Join our thriving ecosystem where innovation meets opportunity, and every provider benefits from shared success
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <Card className="overflow-hidden hover:shadow-lg transition-shadow">
-              <div className="aspect-video relative overflow-hidden">
-                <img 
-                  src="https://images.unsplash.com/photo-1581090464777-f3220bbe1b8b?w=600&h=300&fit=crop" 
-                  alt="Innovation & Ideas" 
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <CardContent className="p-6">
-                <h3 className="text-xl font-semibold mb-3">Innovation & Solutions</h3>
+                <h3 className="text-xl font-semibold mb-3 flex items-center gap-2">
+                  <Search className="w-5 h-5 text-primary" />
+                  Smart Bidder Matching
+                </h3>
                 <p className="text-muted-foreground mb-4">
-                  Spark new ideas and innovative solutions that light up your career path and unlock endless possibilities
+                  Post your project and receive bids from pre-vetted professionals. Our algorithm matches you with the best-rated providers in your area.
                 </p>
-                <div className="space-y-2">
+                <div className="space-y-2 text-sm">
                   <div className="flex items-center gap-2">
                     <div className="w-2 h-2 bg-primary rounded-full"></div>
-                    <span className="text-sm">Creative problem-solving opportunities</span>
+                    <span>Compare multiple detailed bids</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-2 h-2 bg-primary rounded-full"></div>
-                    <span className="text-sm">Access to cutting-edge projects</span>
+                    <span>View portfolios and reviews</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-2 h-2 bg-primary rounded-full"></div>
-                    <span className="text-sm">Innovation rewards and recognition</span>
+                    <span>Instant messaging with providers</span>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="overflow-hidden hover:shadow-lg transition-shadow">
+            <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 hover:scale-105">
               <div className="aspect-video relative overflow-hidden">
                 <img 
-                  src="https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=600&h=300&fit=crop" 
-                  alt="Team Success" 
+                  src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400&h=250&fit=crop" 
+                  alt="Project Tracking" 
                   className="w-full h-full object-cover"
                 />
               </div>
               <CardContent className="p-6">
-                <h3 className="text-xl font-semibold mb-3">Shared Progress & Success</h3>
+                <h3 className="text-xl font-semibold mb-3 flex items-center gap-2">
+                  <BarChart3 className="w-5 h-5 text-primary" />
+                  Project Tracking & Management
+                </h3>
                 <p className="text-muted-foreground mb-4">
-                  Experience teamwork and shared progress that amplifies your achievements and accelerates career growth
+                  Monitor progress, manage payments, and communicate seamlessly. From start to finish, stay in control of your home projects.
                 </p>
-                <div className="space-y-2">
+                <div className="space-y-2 text-sm">
                   <div className="flex items-center gap-2">
                     <div className="w-2 h-2 bg-accent rounded-full"></div>
-                    <span className="text-sm">Collaborative project environments</span>
+                    <span>Real-time progress updates</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-2 h-2 bg-accent rounded-full"></div>
-                    <span className="text-sm">Shared success metrics and bonuses</span>
+                    <span>Secure milestone payments</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-2 h-2 bg-accent rounded-full"></div>
-                    <span className="text-sm">Team achievement recognition</span>
+                    <span>Built-in dispute resolution</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 hover:scale-105">
+              <div className="aspect-video relative overflow-hidden">
+                <img 
+                  src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=400&h=250&fit=crop" 
+                  alt="Quality Assurance" 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <CardContent className="p-6">
+                <h3 className="text-xl font-semibold mb-3 flex items-center gap-2">
+                  <Star className="w-5 h-5 text-primary" />
+                  Quality Guarantee
+                </h3>
+                <p className="text-muted-foreground mb-4">
+                  Every provider is vetted, insured, and rated by real customers. Get peace of mind with our quality guarantee program.
+                </p>
+                <div className="space-y-2 text-sm">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    <span>Background-checked professionals</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    <span>Insurance verification</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    <span>Money-back guarantee</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
+        {/* Provider Registration & Business Features */}
+        <div className="mb-12">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-primary mb-4">Grow Your Business as a Trusted Provider</h2>
+            <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+              Join our network of professionals and access powerful tools to showcase your expertise, manage clients, and scale your business
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 group">
+              <div className="aspect-video relative overflow-hidden">
+                <img 
+                  src="https://images.unsplash.com/photo-1581090464777-f3220bbe1b8b?w=600&h=300&fit=crop" 
+                  alt="Business Innovation" 
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+              </div>
+              <CardContent className="p-6">
+                <h3 className="text-xl font-semibold mb-3 flex items-center gap-2">
+                  <User className="w-5 h-5 text-primary" />
+                  Professional Profile & Portfolio
+                </h3>
+                <p className="text-muted-foreground mb-4">
+                  Create a stunning profile that showcases your expertise. Upload your best work, certifications, and customer testimonials to stand out.
+                </p>
+                <div className="space-y-3">
+                  <div className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-primary rounded-full mt-2"></div>
+                    <div>
+                      <span className="font-medium">Portfolio Gallery:</span>
+                      <span className="text-muted-foreground ml-1">Upload unlimited photos and videos of your work</span>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-primary rounded-full mt-2"></div>
+                    <div>
+                      <span className="font-medium">Skill Verification:</span>
+                      <span className="text-muted-foreground ml-1">Get certified in your specialties</span>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-primary rounded-full mt-2"></div>
+                    <div>
+                      <span className="font-medium">Review System:</span>
+                      <span className="text-muted-foreground ml-1">Build trust with verified customer reviews</span>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 group">
+              <div className="aspect-video relative overflow-hidden">
+                <img 
+                  src="https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=600&h=300&fit=crop" 
+                  alt="Business Management Tools" 
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+              </div>
+              <CardContent className="p-6">
+                <h3 className="text-xl font-semibold mb-3 flex items-center gap-2">
+                  <Briefcase className="w-5 h-5 text-primary" />
+                  Business Management Suite
+                </h3>
+                <p className="text-muted-foreground mb-4">
+                  Streamline your operations with our comprehensive business tools. From lead generation to payment processing, we've got you covered.
+                </p>
+                <div className="space-y-3">
+                  <div className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-accent rounded-full mt-2"></div>
+                    <div>
+                      <span className="font-medium">Lead Management:</span>
+                      <span className="text-muted-foreground ml-1">Automated bidding and client communication</span>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-accent rounded-full mt-2"></div>
+                    <div>
+                      <span className="font-medium">Calendar & Scheduling:</span>
+                      <span className="text-muted-foreground ml-1">Manage appointments and project timelines</span>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-accent rounded-full mt-2"></div>
+                    <div>
+                      <span className="font-medium">Financial Dashboard:</span>
+                      <span className="text-muted-foreground ml-1">Track earnings, invoices, and expenses</span>
+                    </div>
                   </div>
                 </div>
               </CardContent>
@@ -464,66 +539,112 @@ export const JobBoard = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
-            <Card className="overflow-hidden hover:shadow-lg transition-shadow">
+            <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 group">
               <div className="aspect-video relative overflow-hidden">
                 <img 
                   src="https://images.unsplash.com/photo-1517022812141-23620dba5c23?w=600&h=300&fit=crop" 
-                  alt="Growth Opportunities" 
-                  className="w-full h-full object-cover"
+                  alt="Growth & Opportunities" 
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                 />
               </div>
               <CardContent className="p-6">
-                <h3 className="text-xl font-semibold mb-3">Abundant Growth Opportunities</h3>
+                <h3 className="text-xl font-semibold mb-3 flex items-center gap-2">
+                  <TrendingUp className="w-5 h-5 text-primary" />
+                  Growth & Marketing Tools
+                </h3>
                 <p className="text-muted-foreground mb-4">
-                  Join a thriving community where growth and opportunity flow naturally, providing endless pathways to success
+                  Expand your reach and grow your business with our marketing features. Get discovered by more customers in your area.
                 </p>
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                    <span className="text-sm">Unlimited project scaling potential</span>
+                <div className="space-y-3">
+                  <div className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
+                    <div>
+                      <span className="font-medium">Local SEO Optimization:</span>
+                      <span className="text-muted-foreground ml-1">Appear first in local searches</span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                    <span className="text-sm">Continuous learning and development</span>
+                  <div className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
+                    <div>
+                      <span className="font-medium">Promotional Campaigns:</span>
+                      <span className="text-muted-foreground ml-1">Run targeted ads to attract new clients</span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                    <span className="text-sm">Merit-based advancement opportunities</span>
+                  <div className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
+                    <div>
+                      <span className="font-medium">Analytics Dashboard:</span>
+                      <span className="text-muted-foreground ml-1">Track performance and optimize your strategy</span>
+                    </div>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="overflow-hidden hover:shadow-lg transition-shadow">
+            <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 group">
               <div className="aspect-video relative overflow-hidden">
                 <img 
                   src="https://images.unsplash.com/photo-1466721591366-2d5fba72006d?w=600&h=300&fit=crop" 
-                  alt="Diverse Ecosystem" 
-                  className="w-full h-full object-cover"
+                  alt="Community & Support" 
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                 />
               </div>
               <CardContent className="p-6">
-                <h3 className="text-xl font-semibold mb-3">Diverse Ecosystem</h3>
+                <h3 className="text-xl font-semibold mb-3 flex items-center gap-2">
+                  <MessageCircle className="w-5 h-5 text-primary" />
+                  Community & Support Network
+                </h3>
                 <p className="text-muted-foreground mb-4">
-                  Thrive in a diverse ecosystem that celebrates different skills, backgrounds, and approaches to success
+                  Join a thriving community of professionals. Access training, support, and networking opportunities to elevate your business.
                 </p>
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                    <span className="text-sm">Multi-industry project diversity</span>
+                <div className="space-y-3">
+                  <div className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-yellow-500 rounded-full mt-2"></div>
+                    <div>
+                      <span className="font-medium">Professional Training:</span>
+                      <span className="text-muted-foreground ml-1">Access courses and certifications</span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                    <span className="text-sm">Cross-functional team opportunities</span>
+                  <div className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-yellow-500 rounded-full mt-2"></div>
+                    <div>
+                      <span className="font-medium">24/7 Support:</span>
+                      <span className="text-muted-foreground ml-1">Get help when you need it most</span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                    <span className="text-sm">Global collaboration network</span>
+                  <div className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-yellow-500 rounded-full mt-2"></div>
+                    <div>
+                      <span className="font-medium">Networking Events:</span>
+                      <span className="text-muted-foreground ml-1">Connect with other professionals</span>
+                    </div>
                   </div>
                 </div>
               </CardContent>
             </Card>
           </div>
+        </div>
+
+        {/* Call to Action Section */}
+        <div className="text-center mb-12">
+          <Card className="bg-gradient-to-r from-primary/10 via-accent/10 to-primary/10 border-primary/20">
+            <CardContent className="p-8">
+              <h3 className="text-2xl font-bold text-primary mb-4">Ready to Get Started?</h3>
+              <p className="text-lg text-muted-foreground mb-6 max-w-2xl mx-auto">
+                Whether you're looking to hire the perfect professional for your next project or want to grow your business as a provider, ProConnect makes it simple.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button size="lg" className="bg-gradient-to-r from-primary to-accent hover:scale-105 transition-transform">
+                  <Plus className="w-5 h-5 mr-2" />
+                  Post Your Project
+                </Button>
+                <Button size="lg" variant="outline" className="hover:scale-105 transition-transform">
+                  <User className="w-5 h-5 mr-2" />
+                  Become a Provider
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Main Content Tabs */}
