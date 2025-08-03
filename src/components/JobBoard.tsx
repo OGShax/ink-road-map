@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Slider } from "@/components/ui/slider";
-import { Plus, Search, Filter, Users, TrendingUp, DollarSign, Clock, MapPin, X, Briefcase, Palette, Code, BarChart3, Camera, ChevronDown, ChevronUp, HelpCircle, Star, Share2, MessageCircle, User } from "lucide-react";
+import { Plus, Search, Filter, Users, TrendingUp, DollarSign, Clock, MapPin, X, Briefcase, Palette, Code, BarChart3, Camera, ChevronDown, ChevronUp, HelpCircle, Star, Share2, MessageCircle, User, HeadphonesIcon } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import proConnectLogo from "@/assets/proconnect-logo.png";
@@ -296,10 +296,20 @@ export const JobBoard = () => {
               </p>
             </div>
           </div>
-          <Button onClick={handlePostJob} className="flex items-center gap-2 bg-gradient-to-r from-primary to-accent hover:scale-105 transition-transform">
-            <Plus size={20} />
-            Post a Job
-          </Button>
+          <div className="flex items-center gap-3">
+            <Button 
+              variant="outline" 
+              onClick={() => navigate('/support')} 
+              className="flex items-center gap-2 hover:scale-105 transition-transform"
+            >
+              <HeadphonesIcon size={18} />
+              Support
+            </Button>
+            <Button onClick={handlePostJob} className="flex items-center gap-2 bg-gradient-to-r from-primary to-accent hover:scale-105 transition-transform">
+              <Plus size={20} />
+              Post a Job
+            </Button>
+          </div>
         </div>
 
         {/* Stats Cards */}
