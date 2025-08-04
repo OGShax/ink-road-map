@@ -254,6 +254,11 @@ export const JobDetailsPage = ({ jobId, onBack }: { jobId: string; onBack: () =>
 
   // Countdown timer for bidding deadline
   useEffect(() => {
+    // Only run timer for jobs that are actually open for bidding
+    if (mockJob.status !== 'open' && mockJob.status !== 'active') {
+      return;
+    }
+
     const timer = setInterval(() => {
       const now = new Date().getTime();
       const deadline = new Date(mockJob.biddingEndDate).getTime();
@@ -273,12 +278,15 @@ export const JobDetailsPage = ({ jobId, onBack }: { jobId: string; onBack: () =>
           setTimeLeft(`${minutes}m ${seconds}s`);
         }
       } else {
-        setTimeLeft("Bidding Closed");
+        // Only show "Bidding Closed" if deadline passed but job status is still open
+        if (mockJob.status === 'open' || mockJob.status === 'active') {
+          setTimeLeft("Bidding Closed");
+        }
       }
     }, 1000);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [mockJob.status, mockJob.biddingEndDate]);
 
   const handleFollow = () => {
     setIsFollowing(!isFollowing);
@@ -476,7 +484,7 @@ export const JobDetailsPage = ({ jobId, onBack }: { jobId: string; onBack: () =>
               <Star size={16} className={isFollowing ? "fill-current" : ""} />
               {isFollowing ? "Following" : "Follow"}
             </Button>
-            {mockJob.status === 'open' && !mockJob.winnerBid && (
+            {(mockJob.status === 'open' || mockJob.status === 'active') && !mockJob.winnerBid && (
               <Button onClick={() => setShowBidForm(true)} className="gradient-primary">
                 Place Bid
               </Button>
@@ -491,7 +499,7 @@ export const JobDetailsPage = ({ jobId, onBack }: { jobId: string; onBack: () =>
         </div>
 
         {/* Conditional Countdown Timer or Winner Information */}
-        {mockJob.status === 'open' && !mockJob.winnerBid ? (
+        {(mockJob.status === 'open' || mockJob.status === 'active') && !mockJob.winnerBid ? (
           <Card className="mb-6 border-orange-500/20 bg-gradient-to-r from-orange-500/10 to-red-500/10">
             <CardContent className="pt-6">
               <div className="flex items-center justify-center gap-4">
