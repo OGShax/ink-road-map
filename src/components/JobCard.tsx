@@ -46,7 +46,9 @@ export const JobCard = ({
 }: JobCardProps) => {
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'open': return 'bg-green-500/20 text-green-300 border-green-500/30';
+      case 'open':
+      case 'active': return 'bg-green-500/20 text-green-300 border-green-500/30';
+      case 'bidding_closed': return 'bg-orange-500/20 text-orange-300 border-orange-500/30';
       case 'in_progress': return 'bg-blue-500/20 text-blue-300 border-blue-500/30';
       case 'completed': return 'bg-purple-500/20 text-purple-300 border-purple-500/30';
       case 'cancelled': return 'bg-red-500/20 text-red-300 border-red-500/30';
@@ -97,7 +99,7 @@ export const JobCard = ({
           </div>
         </div>
         
-        {status === 'open' && (
+        {(status === 'open' || status === 'active') && (
           <div className="text-sm text-muted-foreground">
             <span className="text-primary font-semibold">{bidCount}</span> bids received
           </div>
@@ -144,7 +146,7 @@ export const JobCard = ({
         >
           View Details
         </Button>
-        {status === 'open' && (
+        {(status === 'open' || status === 'active') && (
           <Button 
             className="flex-1"
             onClick={() => onBid(id)}
