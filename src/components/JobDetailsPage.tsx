@@ -69,6 +69,15 @@ interface QAItem {
 }
 
 const getJobData = (jobId: string) => {
+  // Get current date and create realistic future dates
+  const now = new Date();
+  const tomorrow = new Date(now);
+  tomorrow.setDate(now.getDate() + 1);
+  const nextWeek = new Date(now);
+  nextWeek.setDate(now.getDate() + 7);
+  const nextMonth = new Date(now);
+  nextMonth.setMonth(now.getMonth() + 1);
+  
   const jobsData = [
     {
       id: "1",
@@ -81,7 +90,7 @@ const getJobData = (jobId: string) => {
       budgetMax: 1000,
       urgencyLevel: "within_week",
       materialsProvided: false,
-      biddingEndDate: "2024-02-15T18:00:00Z",
+      biddingEndDate: nextWeek.toISOString(),
       status: "open",
       imageUrls: [
         "https://images.unsplash.com/photo-1522336572468-97b06e8ef143?w=800&h=600&fit=crop",
@@ -126,8 +135,8 @@ const getJobData = (jobId: string) => {
       budgetMax: 300,
       urgencyLevel: "flexible",
       materialsProvided: true,
-      biddingEndDate: "2024-03-01T18:00:00Z",
-      status: "open",
+      biddingEndDate: nextMonth.toISOString(),
+      status: "active",
       imageUrls: [
         "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=800&h=600&fit=crop"
       ],
