@@ -1006,25 +1006,21 @@ export const JobDetailsPage = ({ jobId, onBack }: { jobId: string; onBack: () =>
                 <CardTitle>Place Your Bid</CardTitle>
               </CardHeader>
                <CardContent className="space-y-6">
-                {/* Payment Type Selection */}
+                {/* Payment Type Display */}
                 <div>
                   <Label>Payment Type</Label>
-                  <Select
-                    value={bidData.paymentType}
-                    onValueChange={(value: "fixed" | "hourly") => setBidData(prev => ({...prev, paymentType: value}))}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="fixed">Fixed Project Price</SelectItem>
-                      <SelectItem value="hourly">Hourly Rate</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <div className="p-3 bg-muted/50 rounded-lg">
+                    <span className="font-medium">
+                      {mockJob.paymentType === 'fixed' ? 'Fixed Project Price' : 'Hourly Rate'}
+                    </span>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      This job requires {mockJob.paymentType === 'fixed' ? 'a total project price' : 'an hourly rate'} as set by the job creator.
+                    </p>
+                  </div>
                 </div>
 
                 {/* Amount/Rate Input */}
-                {bidData.paymentType === 'fixed' ? (
+                {mockJob.paymentType === 'fixed' ? (
                   <div>
                     <Label htmlFor="bidAmount">Total Project Amount</Label>
                     <div className="relative">
@@ -1123,7 +1119,7 @@ export const JobDetailsPage = ({ jobId, onBack }: { jobId: string; onBack: () =>
                 {(bidData.amount || (bidData.hourlyRate && bidData.estimatedHours)) && (
                   <div className="bg-muted/50 p-4 rounded-lg space-y-2">
                     <h4 className="font-semibold">Bid Summary</h4>
-                    {bidData.paymentType === 'fixed' ? (
+                    {mockJob.paymentType === 'fixed' ? (
                       <div className="space-y-1">
                         <div className="flex justify-between">
                           <span>Project Amount:</span>
