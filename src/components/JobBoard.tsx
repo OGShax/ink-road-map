@@ -156,14 +156,17 @@ const popularProviders = [
 ];
 
 const categories = [
-  { value: "Hair Studio", label: "Hair Studio", icon: Users, color: "text-pink-500" },
-  { value: "Tattoo Studio", label: "Tattoo Studio", icon: Palette, color: "text-purple-500" },
-  { value: "Massage Therapy", label: "Massage Therapy", icon: Users, color: "text-green-500" },
-  { value: "Nail Tech", label: "Nail Tech", icon: Camera, color: "text-orange-500" },
-  { value: "Barber Shop", label: "Barber Shop", icon: Users, color: "text-blue-500" },
-  { value: "Construction", label: "Construction", icon: Briefcase, color: "text-indigo-500" },
-  { value: "Beauty Services", label: "Beauty Services", icon: Palette, color: "text-rose-500" },
-  { value: "Home Services", label: "Home Services", icon: BarChart3, color: "text-teal-500" }
+  { value: "all", label: "All Categories", icon: Briefcase, color: "text-gray-500" },
+  { value: "electrical", label: "Electrical Work", icon: Code, color: "text-yellow-500" },
+  { value: "plumbing", label: "Plumbing", icon: Users, color: "text-blue-500" },
+  { value: "carpentry", label: "Carpentry", icon: Palette, color: "text-orange-500" },
+  { value: "gardening", label: "Gardening", icon: BarChart3, color: "text-green-500" },
+  { value: "cleaning", label: "Cleaning", icon: Camera, color: "text-purple-500" },
+  { value: "painting", label: "Painting", icon: Palette, color: "text-red-500" },
+  { value: "roofing", label: "Roofing", icon: BarChart3, color: "text-gray-600" },
+  { value: "hvac", label: "HVAC", icon: Users, color: "text-cyan-500" },
+  { value: "flooring", label: "Flooring", icon: BarChart3, color: "text-amber-500" },
+  { value: "general", label: "General Services", icon: Briefcase, color: "text-slate-500" }
 ];
 
 const popularLocations = [

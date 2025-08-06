@@ -20,6 +20,7 @@ interface JobFormData {
   title: string;
   description: string;
   category: string;
+  serviceCategory: string;
   address: string;
   paymentType: 'fixed' | 'hourly';
   approximatedBudget?: number;
@@ -45,7 +46,7 @@ const steps = [
 
 const categories = [
   "Web Development",
-  "Mobile Development",
+  "Mobile Development", 
   "Design & Creative",
   "Writing & Translation",
   "Digital Marketing",
@@ -56,12 +57,26 @@ const categories = [
   "Business Services"
 ];
 
+const serviceCategories = [
+  { value: 'electrical', label: 'Electrical Work' },
+  { value: 'plumbing', label: 'Plumbing' },
+  { value: 'carpentry', label: 'Carpentry' },
+  { value: 'gardening', label: 'Gardening & Landscaping' },
+  { value: 'cleaning', label: 'Cleaning Services' },
+  { value: 'painting', label: 'Painting' },
+  { value: 'roofing', label: 'Roofing' },
+  { value: 'hvac', label: 'HVAC' },
+  { value: 'flooring', label: 'Flooring' },
+  { value: 'general', label: 'General Services' }
+];
+
 export const JobPostingForm = ({ onClose }: { onClose: () => void }) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<JobFormData>({
     title: "",
     description: "",
     category: "",
+    serviceCategory: "general",
     address: "",
     paymentType: "fixed",
     urgencyLevel: "flexible",
@@ -93,6 +108,7 @@ export const JobPostingForm = ({ onClose }: { onClose: () => void }) => {
         if (!formData.title.trim()) newErrors.title = "Job title is required";
         if (!formData.description.trim()) newErrors.description = "Job description is required";
         if (!formData.category) newErrors.category = "Category is required";
+        if (!formData.serviceCategory) newErrors.serviceCategory = "Service category is required";
         break;
       case 2:
         if (!formData.address.trim()) newErrors.address = "Address is required";
@@ -378,6 +394,37 @@ If you're interested or know someone who might be, please check out the details 
                       {errors.category}
                     </p>
                   )}
+                </div>
+
+                <div>
+                  <Label className="flex items-center gap-2">
+                    Service Category
+                    <span className="text-destructive">*</span>
+                  </Label>
+                  <Select
+                    value={formData.serviceCategory}
+                    onValueChange={(value) => updateFormData("serviceCategory", value)}
+                  >
+                    <SelectTrigger className={errors.serviceCategory ? "border-destructive" : ""}>
+                      <SelectValue placeholder="Select a service category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {serviceCategories.map((category) => (
+                        <SelectItem key={category.value} value={category.value}>
+                          {category.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {errors.serviceCategory && (
+                    <p className="text-sm text-destructive flex items-center gap-1 mt-1">
+                      <AlertCircle size={14} />
+                      {errors.serviceCategory}
+                    </p>
+                  )}
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Providers specializing in this category will be automatically notified about this job.
+                  </p>
                 </div>
               </div>
             )}

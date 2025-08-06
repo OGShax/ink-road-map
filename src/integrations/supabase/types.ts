@@ -167,6 +167,9 @@ export type Database = {
           payment_type: Database["public"]["Enums"]["payment_type"]
           project_end_date: string | null
           project_start_date: string | null
+          service_category:
+            | Database["public"]["Enums"]["service_category"]
+            | null
           status: Database["public"]["Enums"]["job_status"]
           title: string
           updated_at: string
@@ -195,6 +198,9 @@ export type Database = {
           payment_type?: Database["public"]["Enums"]["payment_type"]
           project_end_date?: string | null
           project_start_date?: string | null
+          service_category?:
+            | Database["public"]["Enums"]["service_category"]
+            | null
           status?: Database["public"]["Enums"]["job_status"]
           title: string
           updated_at?: string
@@ -223,10 +229,49 @@ export type Database = {
           payment_type?: Database["public"]["Enums"]["payment_type"]
           project_end_date?: string | null
           project_start_date?: string | null
+          service_category?:
+            | Database["public"]["Enums"]["service_category"]
+            | null
           status?: Database["public"]["Enums"]["job_status"]
           title?: string
           updated_at?: string
           urgency_level?: Database["public"]["Enums"]["urgency_level"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          created_at: string
+          data: Json | null
+          id: string
+          is_read: boolean | null
+          job_id: string | null
+          message: string
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          data?: Json | null
+          id?: string
+          is_read?: boolean | null
+          job_id?: string | null
+          message: string
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          data?: Json | null
+          id?: string
+          is_read?: boolean | null
+          job_id?: string | null
+          message?: string
+          title?: string
+          type?: string
           user_id?: string
         }
         Relationships: []
@@ -289,40 +334,82 @@ export type Database = {
         Row: {
           avatar_url: string | null
           bio: string | null
+          business_license: string | null
+          company_name: string | null
           created_at: string
           full_name: string | null
           id: string
+          insurance_info: Json | null
           is_service_provider: boolean | null
+          is_verified_professional: boolean | null
           phone: string | null
           rating: number | null
           total_jobs_completed: number | null
           updated_at: string
           user_id: string
+          verification_documents: Json | null
         }
         Insert: {
           avatar_url?: string | null
           bio?: string | null
+          business_license?: string | null
+          company_name?: string | null
           created_at?: string
           full_name?: string | null
           id?: string
+          insurance_info?: Json | null
           is_service_provider?: boolean | null
+          is_verified_professional?: boolean | null
           phone?: string | null
           rating?: number | null
           total_jobs_completed?: number | null
           updated_at?: string
           user_id: string
+          verification_documents?: Json | null
         }
         Update: {
           avatar_url?: string | null
           bio?: string | null
+          business_license?: string | null
+          company_name?: string | null
           created_at?: string
           full_name?: string | null
           id?: string
+          insurance_info?: Json | null
           is_service_provider?: boolean | null
+          is_verified_professional?: boolean | null
           phone?: string | null
           rating?: number | null
           total_jobs_completed?: number | null
           updated_at?: string
+          user_id?: string
+          verification_documents?: Json | null
+        }
+        Relationships: []
+      }
+      provider_specialties: {
+        Row: {
+          created_at: string
+          experience_years: number | null
+          id: string
+          is_verified: boolean | null
+          specialty: Database["public"]["Enums"]["service_category"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          experience_years?: number | null
+          id?: string
+          is_verified?: boolean | null
+          specialty: Database["public"]["Enums"]["service_category"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          experience_years?: number | null
+          id?: string
+          is_verified?: boolean | null
+          specialty?: Database["public"]["Enums"]["service_category"]
           user_id?: string
         }
         Relationships: []
@@ -416,6 +503,17 @@ export type Database = {
         | "completed"
         | "cancelled"
       payment_type: "fixed" | "hourly"
+      service_category:
+        | "electrical"
+        | "plumbing"
+        | "carpentry"
+        | "gardening"
+        | "cleaning"
+        | "painting"
+        | "roofing"
+        | "hvac"
+        | "flooring"
+        | "general"
       ticket_priority: "low" | "medium" | "high" | "urgent"
       ticket_status: "open" | "in_progress" | "resolved" | "closed"
       urgency_level: "asap" | "within_week" | "flexible"
@@ -557,6 +655,18 @@ export const Constants = {
         "cancelled",
       ],
       payment_type: ["fixed", "hourly"],
+      service_category: [
+        "electrical",
+        "plumbing",
+        "carpentry",
+        "gardening",
+        "cleaning",
+        "painting",
+        "roofing",
+        "hvac",
+        "flooring",
+        "general",
+      ],
       ticket_priority: ["low", "medium", "high", "urgent"],
       ticket_status: ["open", "in_progress", "resolved", "closed"],
       urgency_level: ["asap", "within_week", "flexible"],
