@@ -19,8 +19,7 @@ import { useToast } from "@/hooks/use-toast";
 interface JobFormData {
   title: string;
   description: string;
-  category: string;
-  serviceCategory: string;
+  serviceCategory?: string;
   address: string;
   paymentType: 'fixed' | 'hourly';
   approximatedBudget?: number;
@@ -44,19 +43,6 @@ const steps = [
   { id: 5, title: "Review", description: "Review and publish your job" }
 ];
 
-const categories = [
-  "Web Development",
-  "Mobile Development", 
-  "Design & Creative",
-  "Writing & Translation",
-  "Digital Marketing",
-  "Video & Animation",
-  "Music & Audio",
-  "Programming & Tech",
-  "Data Science",
-  "Business Services"
-];
-
 const serviceCategories = [
   { value: 'electrical', label: 'Electrical Work' },
   { value: 'plumbing', label: 'Plumbing' },
@@ -75,8 +61,7 @@ export const JobPostingForm = ({ onClose }: { onClose: () => void }) => {
   const [formData, setFormData] = useState<JobFormData>({
     title: "",
     description: "",
-    category: "",
-    serviceCategory: "general",
+    serviceCategory: "",
     address: "",
     paymentType: "fixed",
     urgencyLevel: "flexible",
@@ -107,8 +92,6 @@ export const JobPostingForm = ({ onClose }: { onClose: () => void }) => {
       case 1:
         if (!formData.title.trim()) newErrors.title = "Job title is required";
         if (!formData.description.trim()) newErrors.description = "Job description is required";
-        if (!formData.category) newErrors.category = "Category is required";
-        if (!formData.serviceCategory) newErrors.serviceCategory = "Service category is required";
         break;
       case 2:
         if (!formData.address.trim()) newErrors.address = "Address is required";
@@ -177,7 +160,7 @@ export const JobPostingForm = ({ onClose }: { onClose: () => void }) => {
   const generateSharingContent = () => {
     const jobUrl = `https://proconnect.app/jobs/${Date.now()}`; // Placeholder URL
     
-    const shortPost = `🚀 New ${formData.category} job available!
+    const shortPost = `🚀 New job opportunity available!
 
 "${formData.title}"
 
@@ -186,9 +169,9 @@ ${formData.paymentType === "fixed" ? "Fixed project" : "Hourly work"} opportunit
 
 Apply here: ${jobUrl}
 
-#freelance #${formData.category.replace(/\s+/g, '').toLowerCase()} #remote`;
+#freelance #jobopportunity #remote`;
 
-    const detailedPost = `🎯 Exciting ${formData.category} Opportunity Available!
+    const detailedPost = `🎯 Exciting Job Opportunity Available!
 
 📋 Project: ${formData.title}
 
@@ -204,9 +187,9 @@ ${formData.description.substring(0, 200)}${formData.description.length > 200 ? "
 
 Ready to apply? Check out the full details: ${jobUrl}
 
-#freelancework #${formData.category.replace(/\s+/g, '').toLowerCase()} #hiring #remotework`;
+#freelancework #jobopportunity #hiring #remotework`;
 
-    const linkedInPost = `I'm looking for a skilled ${formData.category.toLowerCase()} professional for an exciting project opportunity.
+    const linkedInPost = `I'm looking for a skilled professional for an exciting project opportunity.
 
 Project: ${formData.title}
 ${formData.approximatedBudget ? `Budget: ~$${formData.approximatedBudget.toLocaleString()}` : ""}
@@ -214,7 +197,7 @@ Timeline: ${formData.urgencyLevel === "asap" ? "Immediate start" : formData.urge
 
 If you're interested or know someone who might be, please check out the details here: ${jobUrl}
 
-#freelancer #${formData.category.replace(/\s+/g, '').toLowerCase()} #opportunity`;
+#freelancer #jobopportunity #opportunity`;
 
     return { shortPost, detailedPost, linkedInPost, jobUrl };
   };
@@ -370,45 +353,23 @@ If you're interested or know someone who might be, please check out the details 
 
                 <div>
                   <Label className="flex items-center gap-2">
-                    Category
-                    <span className="text-destructive">*</span>
-                  </Label>
-                  <Select
-                    value={formData.category}
-                    onValueChange={(value) => updateFormData("category", value)}
-                  >
-                    <SelectTrigger className={errors.category ? "border-destructive" : ""}>
-                      <SelectValue placeholder="Select a category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {categories.map((category) => (
-                        <SelectItem key={category} value={category}>
-                          {category}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {errors.category && (
-                    <p className="text-sm text-destructive flex items-center gap-1 mt-1">
-                      <AlertCircle size={14} />
-                      {errors.category}
-                    </p>
-                  )}
-                </div>
-
-                <div>
-                  <Label className="flex items-center gap-2">
                     Service Category
-                    <span className="text-destructive">*</span>
+                    <Badge variant="secondary" className="text-xs">Optional</Badge>
                   </Label>
                   <Select
-                    value={formData.serviceCategory}
-                    onValueChange={(value) => updateFormData("serviceCategory", value)}
+                    value={formData.serviceCategory || ""}
+                    onValueChange={(value) => updateFormData("serviceCategory", value === "skip" ? "" : value)}
                   >
-                    <SelectTrigger className={errors.serviceCategory ? "border-destructive" : ""}>
-                      <SelectValue placeholder="Select a service category" />
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a service category or skip if not found" />
                     </SelectTrigger>
                     <SelectContent>
+                      <SelectItem value="skip">
+                        <div className="flex items-center gap-2">
+                          <X size={14} />
+                          Skip - Category not found
+                        </div>
+                      </SelectItem>
                       {serviceCategories.map((category) => (
                         <SelectItem key={category.value} value={category.value}>
                           {category.label}
@@ -416,14 +377,8 @@ If you're interested or know someone who might be, please check out the details 
                       ))}
                     </SelectContent>
                   </Select>
-                  {errors.serviceCategory && (
-                    <p className="text-sm text-destructive flex items-center gap-1 mt-1">
-                      <AlertCircle size={14} />
-                      {errors.serviceCategory}
-                    </p>
-                  )}
                   <p className="text-xs text-muted-foreground mt-1">
-                    Providers specializing in this category will be automatically notified about this job.
+                    If you select a specific category, providers specializing in that area will be automatically notified. If your service isn't listed, you can skip this field.
                   </p>
                 </div>
               </div>
@@ -1018,7 +973,11 @@ If you're interested or know someone who might be, please check out the details 
                   <CardHeader>
                     <CardTitle className="text-lg">{formData.title || "Untitled Job"}</CardTitle>
                     <div className="flex flex-wrap gap-2">
-                      <Badge variant="secondary">{formData.category || "No category"}</Badge>
+                      {formData.serviceCategory && (
+                        <Badge variant="secondary">
+                          {serviceCategories.find(cat => cat.value === formData.serviceCategory)?.label || formData.serviceCategory}
+                        </Badge>
+                      )}
                       <Badge variant="outline">{formData.paymentType === "fixed" ? "Fixed Price" : "Hourly Rate"}</Badge>
                       <Badge variant="outline" className={
                         formData.urgencyLevel === "asap" ? "border-red-500 text-red-500" :
