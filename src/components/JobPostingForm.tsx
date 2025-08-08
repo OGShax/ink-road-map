@@ -10,8 +10,9 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { CalendarIcon, Upload, X, Move, AlertCircle, MapPin, DollarSign, Clock, Save, Info, CreditCard, Shield, Copy, Share2, ExternalLink, CheckCircle, Facebook, Twitter, Linkedin, Mail, MessageCircle } from "lucide-react";
+import { CalendarIcon, Upload, X, Move, AlertCircle, MapPin, DollarSign, Clock, Save, Info, CreditCard, Shield, Copy, Share2, ExternalLink, CheckCircle, Facebook, Twitter, Linkedin, Mail, MessageCircle, HelpCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
@@ -353,8 +354,25 @@ If you're interested or know someone who might be, please check out the details 
 
                 <div>
                   <Label className="flex items-center gap-2">
-                    Service Category
-                    <Badge variant="secondary" className="text-xs">Optional</Badge>
+                    Service Category (Optional)
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div className="flex items-center justify-center w-5 h-5 rounded-full bg-warning/20 hover:bg-warning/30 transition-colors cursor-help">
+                            <HelpCircle size={12} className="text-warning" />
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent side="right" className="max-w-xs bg-warning/10 border-warning/20">
+                          <div className="space-y-1">
+                            <p className="font-medium text-warning">⚠️ Important Notice</p>
+                            <p className="text-sm">
+                              If you skip selecting a service category, it may be harder for the right providers to find your project. 
+                              Consider selecting the most relevant category to improve your chances of finding qualified professionals.
+                            </p>
+                          </div>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </Label>
                   <Select
                     value={formData.serviceCategory || ""}
