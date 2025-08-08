@@ -75,6 +75,7 @@ export const JobPostingForm = ({ onClose }: { onClose: () => void }) => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isDraft, setIsDraft] = useState(false);
   const [showSharingDialog, setShowSharingDialog] = useState(false);
+  const [showCategoryWarning, setShowCategoryWarning] = useState(false);
   const [copiedItems, setCopiedItems] = useState<Record<string, boolean>>({});
   const { toast } = useToast();
 
@@ -93,6 +94,7 @@ export const JobPostingForm = ({ onClose }: { onClose: () => void }) => {
       case 1:
         if (!formData.title.trim()) newErrors.title = "Job title is required";
         if (!formData.description.trim()) newErrors.description = "Job description is required";
+        if (!formData.serviceCategory) newErrors.serviceCategory = "Service category is required";
         break;
       case 2:
         if (!formData.address.trim()) newErrors.address = "Address is required";
@@ -111,9 +113,26 @@ export const JobPostingForm = ({ onClose }: { onClose: () => void }) => {
   };
 
   const handleNext = () => {
+    // Special handling for step 1 when service category is missing
+    if (currentStep === 1 && !formData.serviceCategory) {
+      const otherErrors: Record<string, string> = {};
+      if (!formData.title.trim()) otherErrors.title = "Job title is required";
+      if (!formData.description.trim()) otherErrors.description = "Job description is required";
+      
+      if (Object.keys(otherErrors).length === 0) {
+        setShowCategoryWarning(true);
+        return;
+      }
+    }
+    
     if (validateStep(currentStep)) {
       setCurrentStep(prev => Math.min(prev + 1, steps.length));
     }
+  };
+
+  const handleProceedWithoutCategory = () => {
+    setShowCategoryWarning(false);
+    setCurrentStep(prev => Math.min(prev + 1, steps.length));
   };
 
   const handlePrevious = () => {
@@ -354,7 +373,8 @@ If you're interested or know someone who might be, please check out the details 
 
                 <div>
                   <Label className="flex items-center gap-2">
-                    Service Category (Optional)
+                    Service Category
+                    <span className="text-destructive">*</span>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -378,25 +398,31 @@ If you're interested or know someone who might be, please check out the details 
                     value={formData.serviceCategory || ""}
                     onValueChange={(value) => updateFormData("serviceCategory", value === "skip" ? "" : value)}
                   >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a service category or skip if not found" />
+                    <SelectTrigger className={errors.serviceCategory ? "border-destructive" : ""}>
+                      <SelectValue placeholder="Select a service category" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="skip">
-                        <div className="flex items-center gap-2">
-                          <X size={14} />
-                          Skip - Category not found
-                        </div>
-                      </SelectItem>
                       {serviceCategories.map((category) => (
                         <SelectItem key={category.value} value={category.value}>
                           {category.label}
                         </SelectItem>
                       ))}
+                      <SelectItem value="skip">
+                        <div className="flex items-center gap-2">
+                          <X size={14} />
+                          None of the above - Continue anyway
+                        </div>
+                      </SelectItem>
                     </SelectContent>
                   </Select>
+                  {errors.serviceCategory && (
+                    <p className="text-sm text-destructive flex items-center gap-1 mt-1">
+                      <AlertCircle size={14} />
+                      {errors.serviceCategory}
+                    </p>
+                  )}
                   <p className="text-xs text-muted-foreground mt-1">
-                    If you select a specific category, providers specializing in that area will be automatically notified. If your service isn't listed, you can skip this field.
+                    Select a category to help the right providers find your project. If none match your needs, you can proceed without one.
                   </p>
                 </div>
               </div>
@@ -1341,6 +1367,45 @@ If you're interested or know someone who might be, please check out the details 
                   Done
                 </Button>
               </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Service Category Warning Dialog */}
+        <Dialog open={showCategoryWarning} onOpenChange={setShowCategoryWarning}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <AlertCircle className="text-warning" size={20} />
+                No Service Category Selected
+              </DialogTitle>
+              <DialogDescription className="text-left space-y-2">
+                <p>
+                  You haven't selected a service category for your job posting. This means:
+                </p>
+                <ul className="list-disc list-inside space-y-1 text-sm">
+                  <li>Specialized providers may not see your job</li>
+                  <li>It might take longer to find qualified professionals</li>
+                  <li>You may receive fewer relevant applications</li>
+                </ul>
+                <p className="font-medium">
+                  Are you sure you want to continue without selecting a service category?
+                </p>
+              </DialogDescription>
+            </DialogHeader>
+            <div className="flex gap-3 justify-end">
+              <Button
+                variant="outline"
+                onClick={() => setShowCategoryWarning(false)}
+              >
+                Go Back & Select Category
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={handleProceedWithoutCategory}
+              >
+                Continue Anyway
+              </Button>
             </div>
           </DialogContent>
         </Dialog>
